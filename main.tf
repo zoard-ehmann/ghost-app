@@ -55,3 +55,12 @@ resource "aws_subnet" "public_c" {
     Project = "cloudx"
   }
 }
+
+resource "aws_internet_gateway" "ghost" {
+  vpc_id = aws_vpc.ghost.id
+
+  tags = {
+    Name    = "cloudx-igw"
+    Project = "cloudx"
+  }
+}
