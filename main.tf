@@ -1,3 +1,10 @@
+# INFO: Set up variables
+
+variable "ssh_public_key" {
+  description = "SSH public key to connect to the instances"
+  type        = string
+}
+
 # INFO: Set up data sources
 
 data "http" "myip" {
@@ -265,4 +272,16 @@ resource "aws_security_group_rule" "efs_egress_vpc" {
   protocol          = "-1"
   cidr_blocks       = [aws_vpc.ghost.cidr_block]
   security_group_id = aws_security_group.efs.id
+}
+
+# INFO: Create SSH key pair
+
+resource "aws_key_pair" "ghost" {
+  key_name   = "ghost-ec2-pool"
+  public_key = var.ssh_public_key
+
+  tags = {
+    Name    = "ghost-ec2-pool"
+    Project = "cloudx"
+  }
 }
