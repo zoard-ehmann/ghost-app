@@ -420,3 +420,24 @@ resource "aws_lb_listener" "ghost" {
     Project = "cloudx"
   }
 }
+
+# INFO: Create launch template
+
+resource "aws_launch_template" "ghost" {
+  name                   = "ghost"
+  instance_type          = "t2.micro"
+  security_group_names   = [aws_security_group.ec2_pool.id]
+  key_name               = aws_key_pair.ghost.key_name
+  update_default_version = true
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name    = "ghost"
+      Project = "cloudx"
+    }
+  }
+
+  user_data = filebase64("${path.module}/setupGhost.sh")
+}
