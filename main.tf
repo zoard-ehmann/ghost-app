@@ -285,3 +285,61 @@ resource "aws_key_pair" "ghost" {
     Project = "cloudx"
   }
 }
+
+# INFO: Create IAM role
+
+resource "aws_iam_role" "ghost" {
+  name = "ghost_app_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = {
+    Name    = "ghost_app_role"
+    Project = "cloudx"
+  }
+}
+
+resource "aws_iam_policy" "ghost" {
+  name        = "ghost_app"
+  description = "Allows EC2 Describe*, EFS DescribeFS, EFS ClientMount & ClientWrite"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:Describe*",
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:DescribeFileSystems"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+
+  tags = {
+    Name    = "ghost_app"
+    Project = "cloudx"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ghost" {
+  role       = aws_iam_role.ghost.name
+  policy_arn = aws_iam_policy.ghost.arn
+}
