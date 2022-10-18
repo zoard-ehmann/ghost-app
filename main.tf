@@ -64,3 +64,32 @@ resource "aws_internet_gateway" "ghost" {
     Project = "cloudx"
   }
 }
+
+resource "aws_route_table" "ghost" {
+  vpc_id = aws_vpc.ghost.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.ghost.id
+  }
+
+  tags = {
+    Name    = "public_rt"
+    Project = "cloudx"
+  }
+}
+
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.public_a.id
+  route_table_id = aws_route_table.ghost.id
+}
+
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.public_b.id
+  route_table_id = aws_route_table.ghost.id
+}
+
+resource "aws_route_table_association" "c" {
+  subnet_id      = aws_subnet.public_c.id
+  route_table_id = aws_route_table.ghost.id
+}
