@@ -1,9 +1,6 @@
 #!/bin/bash -xe
 
 exec > >(tee /var/log/cloud-init-output.log|logger -t user-data -s 2>/dev/console) 2>&1
-### Update this to match your ALB DNS name
-LB_DNS_NAME='#TODO'
-###
 
 REGION=$(/usr/bin/curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/[a-z]$//')
 EFS_ID=$(aws efs describe-file-systems --query 'FileSystems[?Name==`ghost_content`].FileSystemId' --region $REGION --output text)
@@ -26,7 +23,7 @@ mount -t efs -o tls $EFS_ID:/ /home/ghost_user/ghost/content
 cat << EOF > config.development.json
 
 {
-  "url": "http://${LB_DNS_NAME}",
+  "url": "http://${lb_dns_name}",
   "server": {
     "port": 2368,
     "host": "0.0.0.0"

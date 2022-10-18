@@ -373,52 +373,12 @@ resource "aws_efs_mount_target" "c" {
 
 # INFO: Create application load balancer
 
-resource "aws_lb" "ghost" {
-  name               = "ghost-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb.id]
-  subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
+module "load_balancer" {
+  source = "./modules/load_balancer"
 
-  tags = {
-    Name    = "ghost-alb"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_lb_target_group" "ghost" {
-  name     = "ghost-ec2"
-  port     = 2368
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.ghost.id
-
-  tags = {
-    Name    = "ghost-ec2"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_lb_listener" "ghost" {
-  load_balancer_arn = aws_lb.ghost.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.ghost.arn
-
-    forward {
-      target_group {
-        arn    = aws_lb_target_group.ghost.arn
-        weight = 100
-      }
-    }
-  }
-
-  tags = {
-    Name    = "ghost-alb-listener"
-    Project = "cloudx"
-  }
+  security_groups = [aws_security_group.alb.id]
+  subnets         = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
+  vpc_id          = aws_vpc.ghost.id
 }
 
 # INFO: Create launch template
@@ -439,5 +399,7 @@ resource "aws_launch_template" "ghost" {
     }
   }
 
-  user_data = filebase64("${path.module}/setupGhost.sh")
+  user_data = base64encode(templatefile("${path.module}/setupGhost.sh", {
+    lb_dns_name = module.load_balancer.lb_dns_name
+  }))
 }
