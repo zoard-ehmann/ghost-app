@@ -385,8 +385,9 @@ module "load_balancer" {
 
 resource "aws_launch_template" "ghost" {
   name                   = "ghost"
+  image_id               = "ami-026b57f3c383c2eec"
   instance_type          = "t2.micro"
-  security_group_names   = [aws_security_group.ec2_pool.id]
+  vpc_security_group_ids = [aws_security_group.ec2_pool.id]
   key_name               = aws_key_pair.ghost.key_name
   update_default_version = true
 
@@ -402,4 +403,18 @@ resource "aws_launch_template" "ghost" {
   user_data = base64encode(templatefile("${path.module}/setupGhost.sh", {
     lb_dns_name = module.load_balancer.lb_dns_name
   }))
+}
+
+# INFO: Create auto-scaling group
+
+module "auto_scaling_group" {
+  source = "./modules/auto_scaling_group"
+
+  vpc_zone_identifier = [
+    aws_subnet.public_a.id,
+    aws_subnet.public_b.id,
+    aws_subnet.public_c.id
+  ]
+  launch_template_id  = aws_launch_template.ghost.id
+  lb_target_group_arn = module.load_balancer.lb_target_group_arn
 }
