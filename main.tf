@@ -343,3 +343,30 @@ resource "aws_iam_role_policy_attachment" "ghost" {
   role       = aws_iam_role.ghost.name
   policy_arn = aws_iam_policy.ghost.arn
 }
+
+# INFO: Create elastic file system
+
+resource "aws_efs_file_system" "ghost" {
+  tags = {
+    Name    = "ghost_content"
+    Project = "cloudx"
+  }
+}
+
+resource "aws_efs_mount_target" "a" {
+  file_system_id  = aws_efs_file_system.ghost.id
+  subnet_id       = aws_subnet.public_a.id
+  security_groups = [aws_security_group.efs.id]
+}
+
+resource "aws_efs_mount_target" "b" {
+  file_system_id  = aws_efs_file_system.ghost.id
+  subnet_id       = aws_subnet.public_b.id
+  security_groups = [aws_security_group.efs.id]
+}
+
+resource "aws_efs_mount_target" "c" {
+  file_system_id  = aws_efs_file_system.ghost.id
+  subnet_id       = aws_subnet.public_c.id
+  security_groups = [aws_security_group.efs.id]
+}
