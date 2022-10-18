@@ -46,9 +46,10 @@ resource "aws_vpc" "ghost" {
 ### SUBNETS ###
 
 resource "aws_subnet" "public_a" {
-  vpc_id            = aws_vpc.ghost.id
-  cidr_block        = "10.10.1.0/24"
-  availability_zone = "us-east-1a"
+  vpc_id                  = aws_vpc.ghost.id
+  cidr_block              = "10.10.1.0/24"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
 
   tags = {
     Name    = "public_a"
@@ -57,9 +58,10 @@ resource "aws_subnet" "public_a" {
 }
 
 resource "aws_subnet" "public_b" {
-  vpc_id            = aws_vpc.ghost.id
-  cidr_block        = "10.10.2.0/24"
-  availability_zone = "us-east-1b"
+  vpc_id                  = aws_vpc.ghost.id
+  cidr_block              = "10.10.2.0/24"
+  availability_zone       = "us-east-1b"
+  map_public_ip_on_launch = true
 
   tags = {
     Name    = "public_b"
@@ -68,9 +70,10 @@ resource "aws_subnet" "public_b" {
 }
 
 resource "aws_subnet" "public_c" {
-  vpc_id            = aws_vpc.ghost.id
-  cidr_block        = "10.10.3.0/24"
-  availability_zone = "us-east-1c"
+  vpc_id                  = aws_vpc.ghost.id
+  cidr_block              = "10.10.3.0/24"
+  availability_zone       = "us-east-1c"
+  map_public_ip_on_launch = true
 
   tags = {
     Name    = "public_c"
@@ -344,6 +347,11 @@ resource "aws_iam_role_policy_attachment" "ghost" {
   policy_arn = aws_iam_policy.ghost.arn
 }
 
+resource "aws_iam_instance_profile" "ghost" {
+  name = "ghost_app_profile"
+  role = aws_iam_role.ghost.name
+}
+
 # INFO: Create elastic file system
 
 resource "aws_efs_file_system" "ghost" {
@@ -391,6 +399,10 @@ resource "aws_launch_template" "ghost" {
   key_name               = aws_key_pair.ghost.key_name
   update_default_version = true
 
+  iam_instance_profile {
+    arn = aws_iam_instance_profile.ghost.arn
+  }
+
   tag_specifications {
     resource_type = "instance"
 
@@ -417,4 +429,14 @@ module "auto_scaling_group" {
   ]
   launch_template_id  = aws_launch_template.ghost.id
   lb_target_group_arn = module.load_balancer.lb_target_group_arn
+}
+
+# INFO: Create bastion
+
+module "bastion" {
+  source = "./modules/bastion"
+
+  vpc_security_group_ids = [aws_security_group.bastion.id]
+  key_name               = aws_key_pair.ghost.key_name
+  subnet_id              = aws_subnet.public_a.id
 }
