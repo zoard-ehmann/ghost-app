@@ -7,12 +7,12 @@ variable "ssh_public_key" {
   type        = string
 }
 
-### NETWORK STACK ###
-
 variable "project" {
-  description = "Name of VPC"
+  description = "Name of the project"
   type        = string
 }
+
+### NETWORK STACK ###
 
 variable "vpc_name" {
   description = "Name of VPC"
@@ -41,6 +41,23 @@ variable "igw_name" {
 
 variable "rt_name" {
   description = "Name of route table"
+  type        = string
+}
+
+### LOAD BALANCER ###
+
+variable "alb_name" {
+  description = "Name of the application load balancer"
+  type        = string
+}
+
+variable "tg_name" {
+  description = "Name of the target group"
+  type        = string
+}
+
+variable "listener_name" {
+  description = "Name of the listener"
   type        = string
 }
 

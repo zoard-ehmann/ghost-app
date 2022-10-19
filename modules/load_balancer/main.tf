@@ -6,8 +6,8 @@ resource "aws_lb" "ghost" {
   subnets            = var.subnets
 
   tags = {
-    Name    = "ghost-alb"
-    Project = "cloudx"
+    Name    = var.alb_name
+    Project = var.project
   }
 }
 
@@ -18,8 +18,8 @@ resource "aws_lb_target_group" "ghost" {
   vpc_id   = var.vpc_id
 
   tags = {
-    Name    = "ghost-ec2"
-    Project = "cloudx"
+    Name    = var.tg_name
+    Project = var.project
   }
 }
 
@@ -41,7 +41,7 @@ resource "aws_lb_listener" "ghost" {
   }
 
   tags = {
-    Name    = "ghost-alb-listener"
-    Project = "cloudx"
+    Name    = var.listener_name
+    Project = var.project
   }
 }
