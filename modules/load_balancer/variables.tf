@@ -1,3 +1,18 @@
+variable "vpc_id" {
+  description = "ID of the VPC"
+  type        = string
+}
+
+variable "ingress_cidr_blocks" {
+  description = "CIDR blocks for ingress traffic"
+  type        = list(string)
+}
+
+variable "ec2_pool_sg_id" {
+  description = "ID of EC2 pool security group"
+  type        = string
+}
+
 variable "security_groups" {
   description = "Security groups for the ALB"
   type        = list(string)
@@ -8,15 +23,15 @@ variable "subnets" {
   type        = list(string)
 }
 
-variable "vpc_id" {
-  description = "ID of the VPC where the ALB operates"
-  type        = string
-}
-
 # Tags
 
 variable "project" {
   description = "Name of the project"
+  type        = string
+}
+
+variable "alb_sg_name" {
+  description = "Load balancer security group name"
   type        = string
 }
 

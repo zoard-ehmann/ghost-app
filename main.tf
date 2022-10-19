@@ -46,17 +46,17 @@ variable "rt_name" {
 
 ### SECURITY GROUP ###
 
-variable "alb_sg_name" {
-  description = "Load balancer security group name"
-  type        = string
-}
-
 variable "efs_sg_name" {
   description = "Elastic file system security group name"
   type        = string
 }
 
 ### LOAD BALANCER ###
+
+variable "alb_sg_name" {
+  description = "Load balancer security group name"
+  type        = string
+}
 
 variable "alb_name" {
   description = "Name of the application load balancer"
@@ -140,39 +140,6 @@ module "network_stack" {
 }
 
 # INFO: Create security groups
-
-### ALB ###
-
-resource "aws_security_group" "alb" {
-  name        = "alb"
-  description = "Allows access to ALB"
-  vpc_id      = module.network_stack.vpc_id
-
-  tags = {
-    Name    = "alb"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_security_group_rule" "alb_ingress_host_ip" {
-  description       = "Allows traffic from host IP"
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["${chomp(data.http.host_ip.response_body)}/32"]
-  security_group_id = aws_security_group.alb.id
-}
-
-resource "aws_security_group_rule" "alb_egress_ec2_pool" {
-  description              = "Allows traffic to EC2 pool"
-  type                     = "egress"
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  source_security_group_id = aws_security_group.ec2_pool.id
-  security_group_id        = aws_security_group.alb.id
-}
 
 ### EFS ###
 
@@ -314,11 +281,18 @@ resource "aws_efs_mount_target" "c" {
 module "load_balancer" {
   source = "./modules/load_balancer"
 
-  security_groups = [aws_security_group.alb.id]
-  subnets         = [module.network_stack.subnet_a_id, module.network_stack.subnet_b_id, module.network_stack.subnet_c_id]
-  vpc_id          = module.network_stack.vpc_id
+  ingress_cidr_blocks = ["${chomp(data.http.host_ip.response_body)}/32"]
+  ec2_pool_sg_id      = module.auto_scaling_group.sg_id
+
+  subnets = [
+    module.network_stack.subnet_a_id,
+    module.network_stack.subnet_b_id,
+    module.network_stack.subnet_c_id
+  ]
+  vpc_id = module.network_stack.vpc_id
 
   project       = var.project
+  alb_sg_name   = var.alb_sg_name
   alb_name      = var.alb_name
   tg_name       = var.tg_name
   listener_name = var.listener_name
@@ -367,5 +341,3 @@ module "bastion" {
   bastion_sg_name = var.bastion_sg_name
   bastion_name    = var.bastion_name
 }
-
-# TODO: modularize TF code
