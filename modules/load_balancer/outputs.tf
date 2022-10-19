@@ -1,3 +1,8 @@
+output "sg_id" {
+  description = "ID of ALB security group"
+  value       = aws_security_group.this.id
+}
+
 output "lb_dns_name" {
   description = "DNS name of the ALB"
   value       = aws_lb.this.dns_name
