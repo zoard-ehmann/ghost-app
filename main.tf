@@ -44,6 +44,28 @@ variable "rt_name" {
   type        = string
 }
 
+### SECURITY GROUP ###
+
+variable "bastion_sg_name" {
+  description = "Bastion security group name"
+  type        = string
+}
+
+variable "ec2_pool_sg_name" {
+  description = "EC2 pool security group name"
+  type        = string
+}
+
+variable "alb_sg_name" {
+  description = "Load balancer security group name"
+  type        = string
+}
+
+variable "efs_sg_name" {
+  description = "Elastic file system security group name"
+  type        = string
+}
+
 ### LOAD BALANCER ###
 
 variable "alb_name" {
@@ -77,7 +99,7 @@ variable "bastion_name" {
 
 # INFO: Set up data sources
 
-data "http" "myip" {
+data "http" "host_ip" {
   url = "http://ipv4.icanhazip.com"
 }
 
@@ -114,39 +136,6 @@ module "network_stack" {
 
 # INFO: Create security groups
 
-### BASTION ###
-
-resource "aws_security_group" "bastion" {
-  name        = "bastion"
-  description = "Allows access to bastion"
-  vpc_id      = module.network_stack.vpc_id
-
-  tags = {
-    Name    = "bastion"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_security_group_rule" "bastion_ingress_myip" {
-  description       = "Allows SSH from my IP"
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["${chomp(data.http.myip.response_body)}/32"]
-  security_group_id = aws_security_group.bastion.id
-}
-
-resource "aws_security_group_rule" "bastion_egress_anywhere" {
-  description       = "Allows traffic to anywhere"
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.bastion.id
-}
-
 ### EC2 POOL ###
 
 resource "aws_security_group" "ec2_pool" {
@@ -166,7 +155,7 @@ resource "aws_security_group_rule" "ec2_pool_ingress_bastion" {
   from_port                = 22
   to_port                  = 22
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.bastion.id
+  source_security_group_id = module.bastion.sg_id
   security_group_id        = aws_security_group.ec2_pool.id
 }
 
@@ -213,13 +202,13 @@ resource "aws_security_group" "alb" {
   }
 }
 
-resource "aws_security_group_rule" "alb_ingress_myip" {
-  description       = "Allows traffic from my IP"
+resource "aws_security_group_rule" "alb_ingress_host_ip" {
+  description       = "Allows traffic from host IP"
   type              = "ingress"
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["${chomp(data.http.myip.response_body)}/32"]
+  cidr_blocks       = ["${chomp(data.http.host_ip.response_body)}/32"]
   security_group_id = aws_security_group.alb.id
 }
 
@@ -433,12 +422,16 @@ module "auto_scaling_group" {
 module "bastion" {
   source = "./modules/bastion"
 
-  vpc_security_group_ids = [aws_security_group.bastion.id]
+  vpc_id              = module.network_stack.vpc_id
+  ingress_cidr_blocks = ["${chomp(data.http.host_ip.response_body)}/32"]
+
+  vpc_security_group_ids = [module.bastion.sg_id]
   key_name               = aws_key_pair.ghost.key_name
   subnet_id              = module.network_stack.subnet_a_id
 
-  project      = var.project
-  bastion_name = var.bastion_name
+  project         = var.project
+  bastion_sg_name = var.bastion_sg_name
+  bastion_name    = var.bastion_name
 }
 
 # TODO: modularize TF code

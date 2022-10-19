@@ -1,3 +1,13 @@
+variable "vpc_id" {
+  description = "ID of the VPC"
+  type        = string
+}
+
+variable "ingress_cidr_blocks" {
+  description = "CIDR blocks for ingress traffic"
+  type        = list(string)
+}
+
 variable "vpc_security_group_ids" {
   description = "IDs of the security groups"
   type        = list(string)
@@ -17,6 +27,11 @@ variable "subnet_id" {
 
 variable "project" {
   description = "Name of the project"
+  type        = string
+}
+
+variable "bastion_sg_name" {
+  description = "Bastion security group name"
   type        = string
 }
 

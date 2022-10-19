@@ -9,6 +9,12 @@ subnet_c_name = "public_c"
 igw_name      = "cloudx-igw"
 rt_name       = "public_rt"
 
+# Security groups
+bastion_sg_name  = "bastion"
+ec2_pool_sg_name = "ec2_pool"
+alb_sg_name      = "alb"
+efs_sg_name      = "efs"
+
 # Load balancer
 alb_name      = "ghost-alb"
 tg_name       = "ghost-ec2"
