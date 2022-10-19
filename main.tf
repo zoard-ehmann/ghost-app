@@ -1,9 +1,13 @@
 # INFO: Set up variables
 
+### COMMON ###
+
 variable "ssh_public_key" {
   description = "SSH public key to connect to the instances"
   type        = string
 }
+
+### NETWORK STACK ###
 
 variable "project" {
   description = "Name of VPC"
@@ -37,6 +41,13 @@ variable "igw_name" {
 
 variable "rt_name" {
   description = "Name of route table"
+  type        = string
+}
+
+### AUTO-SCALING GROUP ###
+
+variable "asg_instance_name" {
+  description = "Name of the EC2 instances within ASG"
   type        = string
 }
 

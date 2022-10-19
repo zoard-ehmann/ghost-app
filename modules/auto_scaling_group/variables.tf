@@ -12,3 +12,15 @@ variable "lb_target_group_arn" {
   description = "ARN of the target group"
   type        = string
 }
+
+# Tags
+
+variable "project" {
+  description = "Name of the project"
+  type        = string
+}
+
+variable "asg_instance_name" {
+  description = "Name of the EC2 instances within ASG"
+  type        = string
+}

@@ -1,4 +1,4 @@
-resource "aws_autoscaling_group" "ghost" {
+resource "aws_autoscaling_group" "this" {
   name                = "ghost_ec2_pool"
   max_size            = 4
   min_size            = 2
@@ -12,18 +12,18 @@ resource "aws_autoscaling_group" "ghost" {
 
   tag {
     key                 = "Name"
-    value               = "ghost-instance"
+    value               = var.asg_instance_name
     propagate_at_launch = true
   }
 
   tag {
     key                 = "Project"
-    value               = "cloudx"
+    value               = var.project
     propagate_at_launch = true
   }
 }
 
-resource "aws_autoscaling_attachment" "ghost" {
-  autoscaling_group_name = aws_autoscaling_group.ghost.id
+resource "aws_autoscaling_attachment" "this" {
+  autoscaling_group_name = aws_autoscaling_group.this.id
   lb_target_group_arn    = var.lb_target_group_arn
 }
