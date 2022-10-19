@@ -10,7 +10,6 @@ igw_name      = "cloudx-igw"
 rt_name       = "public_rt"
 
 # Security groups
-bastion_sg_name  = "bastion"
 ec2_pool_sg_name = "ec2_pool"
 alb_sg_name      = "alb"
 efs_sg_name      = "efs"
@@ -24,4 +23,5 @@ listener_name = "ghost-alb-listener"
 asg_instance_name = "ghost-instance"
 
 # Bastion
-bastion_name = "bastion"
+bastion_sg_name = "bastion"
+bastion_name    = "bastion"

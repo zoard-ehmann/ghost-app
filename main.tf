@@ -46,11 +46,6 @@ variable "rt_name" {
 
 ### SECURITY GROUP ###
 
-variable "bastion_sg_name" {
-  description = "Bastion security group name"
-  type        = string
-}
-
 variable "ec2_pool_sg_name" {
   description = "EC2 pool security group name"
   type        = string
@@ -91,6 +86,11 @@ variable "asg_instance_name" {
 }
 
 ### BASTION ###
+
+variable "bastion_sg_name" {
+  description = "Bastion security group name"
+  type        = string
+}
 
 variable "bastion_name" {
   description = "Name of the bastion instance"
