@@ -44,7 +44,7 @@ variable "rt_name" {
   type        = string
 }
 
-### SECURITY GROUP ###
+### EFS ###
 
 variable "efs_sg_name" {
   description = "Elastic file system security group name"
@@ -139,41 +139,6 @@ module "network_stack" {
   rt_name       = var.rt_name
 }
 
-# INFO: Create security groups
-
-### EFS ###
-
-resource "aws_security_group" "efs" {
-  name        = "efs"
-  description = "Defines access to EFS mount points"
-  vpc_id      = module.network_stack.vpc_id
-
-  tags = {
-    Name    = "efs"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_security_group_rule" "efs_ingress_ec2_pool" {
-  description              = "Allows access from EC2 pool"
-  type                     = "ingress"
-  from_port                = 2049
-  to_port                  = 2049
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.ec2_pool.id
-  security_group_id        = aws_security_group.efs.id
-}
-
-resource "aws_security_group_rule" "efs_egress_vpc" {
-  description       = "Allows traffic to Ghost VPC"
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = [module.network_stack.vpc_cidr]
-  security_group_id = aws_security_group.efs.id
-}
-
 # INFO: Create SSH key pair
 
 resource "aws_key_pair" "ghost" {
@@ -251,29 +216,20 @@ resource "aws_iam_instance_profile" "ghost" {
 
 # INFO: Create elastic file system
 
-resource "aws_efs_file_system" "ghost" {
-  tags = {
-    Name    = "ghost_content"
-    Project = "cloudx"
-  }
-}
+module "efs" {
+  source = "./modules/efs"
 
-resource "aws_efs_mount_target" "a" {
-  file_system_id  = aws_efs_file_system.ghost.id
-  subnet_id       = module.network_stack.subnet_a_id
-  security_groups = [aws_security_group.efs.id]
-}
+  vpc_id             = module.network_stack.vpc_id
+  ec2_pool_sg_id     = module.auto_scaling_group.sg_id
+  egress_cidr_blocks = [module.network_stack.vpc_cidr]
 
-resource "aws_efs_mount_target" "b" {
-  file_system_id  = aws_efs_file_system.ghost.id
-  subnet_id       = module.network_stack.subnet_b_id
-  security_groups = [aws_security_group.efs.id]
-}
+  subnet_a_id = module.network_stack.subnet_a_id
+  subnet_b_id = module.network_stack.subnet_b_id
+  subnet_c_id = module.network_stack.subnet_c_id
 
-resource "aws_efs_mount_target" "c" {
-  file_system_id  = aws_efs_file_system.ghost.id
-  subnet_id       = module.network_stack.subnet_c_id
-  security_groups = [aws_security_group.efs.id]
+  project     = var.project
+  efs_sg_name = var.efs_sg_name
+  efs_name    = var.efs_name
 }
 
 # INFO: Create application load balancer

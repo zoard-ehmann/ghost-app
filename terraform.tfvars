@@ -9,11 +9,12 @@ subnet_c_name = "public_c"
 igw_name      = "cloudx-igw"
 rt_name       = "public_rt"
 
-# Security groups
-alb_sg_name = "alb"
+# EFS
 efs_sg_name = "efs"
+efs_name    = "ghost_content"
 
 # Load balancer
+alb_sg_name   = "alb"
 alb_name      = "ghost-alb"
 tg_name       = "ghost-ec2"
 listener_name = "ghost-alb-listener"
