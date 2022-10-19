@@ -51,6 +51,11 @@ variable "efs_sg_name" {
   type        = string
 }
 
+variable "efs_name" {
+  description = "Name of elastic file system"
+  type        = string
+}
+
 ### LOAD BALANCER ###
 
 variable "alb_sg_name" {
@@ -262,7 +267,7 @@ module "auto_scaling_group" {
   vpc_id              = module.network_stack.vpc_id
   bastion_sg_id       = module.bastion.sg_id
   ingress_cidr_blocks = [module.network_stack.vpc_cidr]
-  alb_sg_id           = aws_security_group.alb.id
+  alb_sg_id           = module.load_balancer.sg_id
 
   key_name        = aws_key_pair.ghost.key_name
   iam_profile_arn = aws_iam_instance_profile.ghost.arn
