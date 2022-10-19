@@ -5,6 +5,41 @@ variable "ssh_public_key" {
   type        = string
 }
 
+variable "project" {
+  description = "Name of VPC"
+  type        = string
+}
+
+variable "vpc_name" {
+  description = "Name of VPC"
+  type        = string
+}
+
+variable "subnet_a_name" {
+  description = "Name of subnet A"
+  type        = string
+}
+
+variable "subnet_b_name" {
+  description = "Name of subnet B"
+  type        = string
+}
+
+variable "subnet_c_name" {
+  description = "Name of subnet C"
+  type        = string
+}
+
+variable "igw_name" {
+  description = "Name of internet gateway"
+  type        = string
+}
+
+variable "rt_name" {
+  description = "Name of route table"
+  type        = string
+}
+
 # INFO: Set up data sources
 
 data "http" "myip" {
@@ -30,97 +65,16 @@ provider "aws" {
 
 # INFO: Create network stack
 
-### VPC ###
+module "network_stack" {
+  source = "./modules/network_stack"
 
-resource "aws_vpc" "ghost" {
-  cidr_block           = "10.10.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-
-  tags = {
-    Name    = "cloudx"
-    Project = "cloudx"
-  }
-}
-
-### SUBNETS ###
-
-resource "aws_subnet" "public_a" {
-  vpc_id                  = aws_vpc.ghost.id
-  cidr_block              = "10.10.1.0/24"
-  availability_zone       = "us-east-1a"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name    = "public_a"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_subnet" "public_b" {
-  vpc_id                  = aws_vpc.ghost.id
-  cidr_block              = "10.10.2.0/24"
-  availability_zone       = "us-east-1b"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name    = "public_b"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_subnet" "public_c" {
-  vpc_id                  = aws_vpc.ghost.id
-  cidr_block              = "10.10.3.0/24"
-  availability_zone       = "us-east-1c"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name    = "public_c"
-    Project = "cloudx"
-  }
-}
-
-### IGW ###
-
-resource "aws_internet_gateway" "ghost" {
-  vpc_id = aws_vpc.ghost.id
-
-  tags = {
-    Name    = "cloudx-igw"
-    Project = "cloudx"
-  }
-}
-
-### ROUTE TABLE ###
-
-resource "aws_route_table" "ghost" {
-  vpc_id = aws_vpc.ghost.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.ghost.id
-  }
-
-  tags = {
-    Name    = "public_rt"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_route_table_association" "a" {
-  subnet_id      = aws_subnet.public_a.id
-  route_table_id = aws_route_table.ghost.id
-}
-
-resource "aws_route_table_association" "b" {
-  subnet_id      = aws_subnet.public_b.id
-  route_table_id = aws_route_table.ghost.id
-}
-
-resource "aws_route_table_association" "c" {
-  subnet_id      = aws_subnet.public_c.id
-  route_table_id = aws_route_table.ghost.id
+  project       = var.project
+  vpc_name      = var.vpc_name
+  subnet_a_name = var.subnet_a_name
+  subnet_b_name = var.subnet_b_name
+  subnet_c_name = var.subnet_c_name
+  igw_name      = var.igw_name
+  rt_name       = var.rt_name
 }
 
 # INFO: Create security groups
@@ -130,7 +84,7 @@ resource "aws_route_table_association" "c" {
 resource "aws_security_group" "bastion" {
   name        = "bastion"
   description = "Allows access to bastion"
-  vpc_id      = aws_vpc.ghost.id
+  vpc_id      = module.network_stack.vpc_id
 
   tags = {
     Name    = "bastion"
@@ -163,7 +117,7 @@ resource "aws_security_group_rule" "bastion_egress_anywhere" {
 resource "aws_security_group" "ec2_pool" {
   name        = "ec2_pool"
   description = "Allows access to ec2 instances"
-  vpc_id      = aws_vpc.ghost.id
+  vpc_id      = module.network_stack.vpc_id
 
   tags = {
     Name    = "ec2_pool"
@@ -187,7 +141,7 @@ resource "aws_security_group_rule" "ec2_pool_ingress_vpc" {
   from_port         = 2049
   to_port           = 2049
   protocol          = "tcp"
-  cidr_blocks       = [aws_vpc.ghost.cidr_block]
+  cidr_blocks       = [module.network_stack.vpc_cidr]
   security_group_id = aws_security_group.ec2_pool.id
 }
 
@@ -216,7 +170,7 @@ resource "aws_security_group_rule" "ec2_pool_egress_anywhere" {
 resource "aws_security_group" "alb" {
   name        = "alb"
   description = "Allows access to ALB"
-  vpc_id      = aws_vpc.ghost.id
+  vpc_id      = module.network_stack.vpc_id
 
   tags = {
     Name    = "alb"
@@ -249,7 +203,7 @@ resource "aws_security_group_rule" "alb_egress_ec2_pool" {
 resource "aws_security_group" "efs" {
   name        = "efs"
   description = "Defines access to EFS mount points"
-  vpc_id      = aws_vpc.ghost.id
+  vpc_id      = module.network_stack.vpc_id
 
   tags = {
     Name    = "efs"
@@ -273,7 +227,7 @@ resource "aws_security_group_rule" "efs_egress_vpc" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = [aws_vpc.ghost.cidr_block]
+  cidr_blocks       = [module.network_stack.vpc_cidr]
   security_group_id = aws_security_group.efs.id
 }
 
@@ -363,19 +317,19 @@ resource "aws_efs_file_system" "ghost" {
 
 resource "aws_efs_mount_target" "a" {
   file_system_id  = aws_efs_file_system.ghost.id
-  subnet_id       = aws_subnet.public_a.id
+  subnet_id       = module.network_stack.subnet_a_id
   security_groups = [aws_security_group.efs.id]
 }
 
 resource "aws_efs_mount_target" "b" {
   file_system_id  = aws_efs_file_system.ghost.id
-  subnet_id       = aws_subnet.public_b.id
+  subnet_id       = module.network_stack.subnet_b_id
   security_groups = [aws_security_group.efs.id]
 }
 
 resource "aws_efs_mount_target" "c" {
   file_system_id  = aws_efs_file_system.ghost.id
-  subnet_id       = aws_subnet.public_c.id
+  subnet_id       = module.network_stack.subnet_c_id
   security_groups = [aws_security_group.efs.id]
 }
 
@@ -385,8 +339,8 @@ module "load_balancer" {
   source = "./modules/load_balancer"
 
   security_groups = [aws_security_group.alb.id]
-  subnets         = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
-  vpc_id          = aws_vpc.ghost.id
+  subnets         = [module.network_stack.subnet_a_id, module.network_stack.subnet_b_id, module.network_stack.subnet_c_id]
+  vpc_id          = module.network_stack.vpc_id
 }
 
 # INFO: Create launch template
@@ -423,9 +377,9 @@ module "auto_scaling_group" {
   source = "./modules/auto_scaling_group"
 
   vpc_zone_identifier = [
-    aws_subnet.public_a.id,
-    aws_subnet.public_b.id,
-    aws_subnet.public_c.id
+    module.network_stack.subnet_a_id,
+    module.network_stack.subnet_b_id,
+    module.network_stack.subnet_c_id
   ]
   launch_template_id  = aws_launch_template.ghost.id
   lb_target_group_arn = module.load_balancer.lb_target_group_arn
@@ -438,5 +392,7 @@ module "bastion" {
 
   vpc_security_group_ids = [aws_security_group.bastion.id]
   key_name               = aws_key_pair.ghost.key_name
-  subnet_id              = aws_subnet.public_a.id
+  subnet_id              = module.network_stack.subnet_a_id
 }
+
+# TODO: modularize TF code
