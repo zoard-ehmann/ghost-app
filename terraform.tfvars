@@ -10,9 +10,8 @@ igw_name      = "cloudx-igw"
 rt_name       = "public_rt"
 
 # Security groups
-ec2_pool_sg_name = "ec2_pool"
-alb_sg_name      = "alb"
-efs_sg_name      = "efs"
+alb_sg_name = "alb"
+efs_sg_name = "efs"
 
 # Load balancer
 alb_name      = "ghost-alb"
@@ -20,7 +19,9 @@ tg_name       = "ghost-ec2"
 listener_name = "ghost-alb-listener"
 
 # Auto-scaling group
-asg_instance_name = "ghost-instance"
+ec2_pool_sg_name     = "ec2_pool"
+launch_template_name = "ghost"
+asg_instance_name    = "ghost-instance"
 
 # Bastion
 bastion_sg_name = "bastion"

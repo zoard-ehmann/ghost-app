@@ -46,11 +46,6 @@ variable "rt_name" {
 
 ### SECURITY GROUP ###
 
-variable "ec2_pool_sg_name" {
-  description = "EC2 pool security group name"
-  type        = string
-}
-
 variable "alb_sg_name" {
   description = "Load balancer security group name"
   type        = string
@@ -79,6 +74,16 @@ variable "listener_name" {
 }
 
 ### AUTO-SCALING GROUP ###
+
+variable "ec2_pool_sg_name" {
+  description = "EC2 pool security group name"
+  type        = string
+}
+
+variable "launch_template_name" {
+  description = "Name of the launch template"
+  type        = string
+}
 
 variable "asg_instance_name" {
   description = "Name of the EC2 instances within ASG"
@@ -135,59 +140,6 @@ module "network_stack" {
 }
 
 # INFO: Create security groups
-
-### EC2 POOL ###
-
-resource "aws_security_group" "ec2_pool" {
-  name        = "ec2_pool"
-  description = "Allows access to ec2 instances"
-  vpc_id      = module.network_stack.vpc_id
-
-  tags = {
-    Name    = "ec2_pool"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_security_group_rule" "ec2_pool_ingress_bastion" {
-  description              = "Allows SSH from Bastion"
-  type                     = "ingress"
-  from_port                = 22
-  to_port                  = 22
-  protocol                 = "tcp"
-  source_security_group_id = module.bastion.sg_id
-  security_group_id        = aws_security_group.ec2_pool.id
-}
-
-resource "aws_security_group_rule" "ec2_pool_ingress_vpc" {
-  description       = "Allows traffic from Ghost VPC"
-  type              = "ingress"
-  from_port         = 2049
-  to_port           = 2049
-  protocol          = "tcp"
-  cidr_blocks       = [module.network_stack.vpc_cidr]
-  security_group_id = aws_security_group.ec2_pool.id
-}
-
-resource "aws_security_group_rule" "ec2_pool_ingress_alb" {
-  description              = "Allows traffic from ALB"
-  type                     = "ingress"
-  from_port                = 2368
-  to_port                  = 2368
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.alb.id
-  security_group_id        = aws_security_group.ec2_pool.id
-}
-
-resource "aws_security_group_rule" "ec2_pool_egress_anywhere" {
-  description       = "Allows traffic to anywhere"
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ec2_pool.id
-}
 
 ### ALB ###
 
@@ -372,49 +324,31 @@ module "load_balancer" {
   listener_name = var.listener_name
 }
 
-# INFO: Create launch template
-
-resource "aws_launch_template" "ghost" {
-  name                   = "ghost"
-  image_id               = "ami-026b57f3c383c2eec"
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.ec2_pool.id]
-  key_name               = aws_key_pair.ghost.key_name
-  update_default_version = true
-
-  iam_instance_profile {
-    arn = aws_iam_instance_profile.ghost.arn
-  }
-
-  tag_specifications {
-    resource_type = "instance"
-
-    tags = {
-      Name    = "ghost"
-      Project = "cloudx"
-    }
-  }
-
-  user_data = base64encode(templatefile("${path.module}/setupGhost.sh", {
-    lb_dns_name = module.load_balancer.lb_dns_name
-  }))
-}
-
 # INFO: Create auto-scaling group
 
 module "auto_scaling_group" {
   source = "./modules/auto_scaling_group"
+
+  vpc_id              = module.network_stack.vpc_id
+  bastion_sg_id       = module.bastion.sg_id
+  ingress_cidr_blocks = [module.network_stack.vpc_cidr]
+  alb_sg_id           = aws_security_group.alb.id
+
+  key_name        = aws_key_pair.ghost.key_name
+  iam_profile_arn = aws_iam_instance_profile.ghost.arn
+  lb_dns_name     = module.load_balancer.lb_dns_name
 
   vpc_zone_identifier = [
     module.network_stack.subnet_a_id,
     module.network_stack.subnet_b_id,
     module.network_stack.subnet_c_id
   ]
-  launch_template_id  = aws_launch_template.ghost.id
   lb_target_group_arn = module.load_balancer.lb_target_group_arn
 
-  project           = var.project
-  asg_instance_name = var.asg_instance_name
+  project              = var.project
+  ec2_pool_sg_name     = var.ec2_pool_sg_name
+  launch_template_name = var.launch_template_name
+  asg_instance_name    = var.asg_instance_name
 }
 
 # INFO: Create bastion
