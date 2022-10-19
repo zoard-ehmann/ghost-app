@@ -376,6 +376,11 @@ module "load_balancer" {
   security_groups = [aws_security_group.alb.id]
   subnets         = [module.network_stack.subnet_a_id, module.network_stack.subnet_b_id, module.network_stack.subnet_c_id]
   vpc_id          = module.network_stack.vpc_id
+
+  project       = var.project
+  alb_name      = var.alb_name
+  tg_name       = var.tg_name
+  listener_name = var.listener_name
 }
 
 # INFO: Create launch template
@@ -418,6 +423,9 @@ module "auto_scaling_group" {
   ]
   launch_template_id  = aws_launch_template.ghost.id
   lb_target_group_arn = module.load_balancer.lb_target_group_arn
+
+  project           = var.project
+  asg_instance_name = var.asg_instance_name
 }
 
 # INFO: Create bastion
@@ -428,6 +436,9 @@ module "bastion" {
   vpc_security_group_ids = [aws_security_group.bastion.id]
   key_name               = aws_key_pair.ghost.key_name
   subnet_id              = module.network_stack.subnet_a_id
+
+  project      = var.project
+  bastion_name = var.bastion_name
 }
 
 # TODO: modularize TF code
