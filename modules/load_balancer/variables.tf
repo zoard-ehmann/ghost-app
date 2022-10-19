@@ -13,11 +13,6 @@ variable "ec2_pool_sg_id" {
   type        = string
 }
 
-variable "security_groups" {
-  description = "Security groups for the ALB"
-  type        = list(string)
-}
-
 variable "subnets" {
   description = "Subnets where the ALB operates"
   type        = list(string)
