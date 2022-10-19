@@ -51,6 +51,13 @@ variable "asg_instance_name" {
   type        = string
 }
 
+### BASTION ###
+
+variable "bastion_name" {
+  description = "Name of the bastion instance"
+  type        = string
+}
+
 # INFO: Set up data sources
 
 data "http" "myip" {

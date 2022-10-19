@@ -11,3 +11,6 @@ rt_name       = "public_rt"
 
 # Auto-scaling group
 asg_instance_name = "ghost-instance"
+
+# Bastion
+bastion_name = "bastion"
