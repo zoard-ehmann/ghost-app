@@ -1,6 +1,6 @@
 variable "vpc_zone_identifier" {
   description = "Subnets of the VPC"
-  type        = list(any)
+  type        = list(string)
 }
 
 variable "launch_template_id" {
