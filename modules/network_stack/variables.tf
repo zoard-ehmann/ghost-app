@@ -25,12 +25,32 @@ variable "subnet_c_name" {
   type        = string
 }
 
+variable "subnet_db_a_name" {
+  description = "Name of DB subnet A"
+  type        = string
+}
+
+variable "subnet_db_b_name" {
+  description = "Name of DB subnet B"
+  type        = string
+}
+
+variable "subnet_db_c_name" {
+  description = "Name of DB subnet C"
+  type        = string
+}
+
 variable "igw_name" {
   description = "Name of internet gateway"
   type        = string
 }
 
-variable "rt_name" {
-  description = "Name of route table"
+variable "public_rt_name" {
+  description = "Name of public route table"
+  type        = string
+}
+
+variable "private_rt_name" {
+  description = "Name of private route table"
   type        = string
 }

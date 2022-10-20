@@ -2,12 +2,16 @@
 project = "cloudx"
 
 # Network stack
-vpc_name      = "cloudx"
-subnet_a_name = "public_a"
-subnet_b_name = "public_b"
-subnet_c_name = "public_c"
-igw_name      = "cloudx-igw"
-rt_name       = "public_rt"
+vpc_name         = "cloudx"
+subnet_a_name    = "public_a"
+subnet_b_name    = "public_b"
+subnet_c_name    = "public_c"
+subnet_db_a_name = "private_db_a"
+subnet_db_b_name = "private_db_b"
+subnet_db_c_name = "private_db_c"
+igw_name         = "cloudx-igw"
+public_rt_name   = "public_rt"
+private_rt_name  = "private_rt"
 
 # SSH key-pair
 key_pair_name = "ghost-ec2-pool"

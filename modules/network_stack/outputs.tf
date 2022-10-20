@@ -22,3 +22,18 @@ output "subnet_c_id" {
   description = "ID of subnet C"
   value       = aws_subnet.c.id
 }
+
+output "subnet_db_a_id" {
+  description = "ID of DB subnet A"
+  value       = aws_subnet.db_a.id
+}
+
+output "subnet_db_b_id" {
+  description = "ID of DB subnet B"
+  value       = aws_subnet.db_b.id
+}
+
+output "subnet_db_c_id" {
+  description = "ID of DB subnet C"
+  value       = aws_subnet.db_c.id
+}

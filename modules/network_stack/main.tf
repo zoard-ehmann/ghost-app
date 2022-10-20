@@ -49,6 +49,39 @@ resource "aws_subnet" "c" {
   }
 }
 
+resource "aws_subnet" "db_a" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.10.20.0/24"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    Name    = var.subnet_db_a_name
+    Project = var.project
+  }
+}
+
+resource "aws_subnet" "db_b" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.10.21.0/24"
+  availability_zone = "us-east-1b"
+
+  tags = {
+    Name    = var.subnet_db_b_name
+    Project = var.project
+  }
+}
+
+resource "aws_subnet" "db_c" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.10.22.0/24"
+  availability_zone = "us-east-1c"
+
+  tags = {
+    Name    = var.subnet_db_c_name
+    Project = var.project
+  }
+}
+
 ### IGW ###
 
 resource "aws_internet_gateway" "this" {
@@ -62,7 +95,7 @@ resource "aws_internet_gateway" "this" {
 
 ### ROUTE TABLE ###
 
-resource "aws_route_table" "this" {
+resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 
   route {
@@ -71,22 +104,46 @@ resource "aws_route_table" "this" {
   }
 
   tags = {
-    Name    = var.rt_name
+    Name    = var.public_rt_name
     Project = var.project
   }
 }
 
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.a.id
-  route_table_id = aws_route_table.this.id
+  route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "b" {
   subnet_id      = aws_subnet.b.id
-  route_table_id = aws_route_table.this.id
+  route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "c" {
   subnet_id      = aws_subnet.c.id
-  route_table_id = aws_route_table.this.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name    = var.private_rt_name
+    Project = var.project
+  }
+}
+
+resource "aws_route_table_association" "db_a" {
+  subnet_id      = aws_subnet.db_a.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "db_b" {
+  subnet_id      = aws_subnet.db_b.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "db_c" {
+  subnet_id      = aws_subnet.db_c.id
+  route_table_id = aws_route_table.private.id
 }

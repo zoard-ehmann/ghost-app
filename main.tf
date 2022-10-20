@@ -39,13 +39,33 @@ variable "subnet_c_name" {
   type        = string
 }
 
+variable "subnet_db_a_name" {
+  description = "Name of DB subnet A"
+  type        = string
+}
+
+variable "subnet_db_b_name" {
+  description = "Name of DB subnet B"
+  type        = string
+}
+
+variable "subnet_db_c_name" {
+  description = "Name of DB subnet C"
+  type        = string
+}
+
 variable "igw_name" {
   description = "Name of internet gateway"
   type        = string
 }
 
-variable "rt_name" {
-  description = "Name of route table"
+variable "public_rt_name" {
+  description = "Name of public route table"
+  type        = string
+}
+
+variable "private_rt_name" {
+  description = "Name of private route table"
   type        = string
 }
 
@@ -164,13 +184,13 @@ provider "aws" {
 module "network_stack" {
   source = "./modules/network_stack"
 
-  project       = var.project
-  vpc_name      = var.vpc_name
-  subnet_a_name = var.subnet_a_name
-  subnet_b_name = var.subnet_b_name
-  subnet_c_name = var.subnet_c_name
-  igw_name      = var.igw_name
-  rt_name       = var.rt_name
+  project        = var.project
+  vpc_name       = var.vpc_name
+  subnet_a_name  = var.subnet_a_name
+  subnet_b_name  = var.subnet_b_name
+  subnet_c_name  = var.subnet_c_name
+  igw_name       = var.igw_name
+  public_rt_name = var.public_rt_name
 }
 
 # INFO: Create SSH key pair
