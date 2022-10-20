@@ -23,6 +23,16 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "host_username" {
+  description = "Username on the host machine (helps to locate SSH private key)"
+  type        = string
+}
+
+variable "key_pair_name" {
+  description = "Name of the SSH key-pair"
+  type        = string
+}
+
 # Tags
 
 variable "project" {

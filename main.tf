@@ -7,6 +7,11 @@ variable "ssh_public_key" {
   type        = string
 }
 
+variable "host_username" {
+  description = "Username on the host machine (helps to locate SSH private key)"
+  type        = string
+}
+
 variable "project" {
   description = "Name of the project"
   type        = string
@@ -269,6 +274,8 @@ module "bastion" {
   vpc_security_group_ids = [module.bastion.sg_id]
   key_name               = aws_key_pair.ghost.key_name
   subnet_id              = module.network_stack.subnet_a_id
+  host_username          = var.host_username
+  key_pair_name          = var.key_pair_name
 
   project         = var.project
   bastion_sg_name = var.bastion_sg_name

@@ -36,6 +36,25 @@ resource "aws_instance" "this" {
   vpc_security_group_ids      = var.vpc_security_group_ids
   key_name                    = var.key_name
   subnet_id                   = var.subnet_id
+  user_data_replace_on_change = true
+
+  provisioner "file" {
+    source      = "/home/${var.host_username}/.ssh/${var.key_pair_name}"
+    destination = "/home/ec2-user/.ssh/${var.key_pair_name}"
+
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file("/home/${var.host_username}/.ssh/${var.key_pair_name}")
+      host        = self.public_ip
+    }
+  }
+
+  user_data = <<EOF
+#!/bin/bash -xe
+
+chmod 400 "/home/ec2-user/.ssh/${var.key_pair_name}"
+EOF
 
   tags = {
     Name    = var.bastion_name
