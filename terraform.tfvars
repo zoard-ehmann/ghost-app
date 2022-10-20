@@ -9,6 +9,9 @@ subnet_c_name = "public_c"
 igw_name      = "cloudx-igw"
 rt_name       = "public_rt"
 
+# SSH key-pair
+key_pair_name = "ghost-ec2-pool"
+
 # IAM
 iam_role_name    = "ghost_app_role"
 iam_policy_name  = "ghost_app"

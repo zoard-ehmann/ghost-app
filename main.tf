@@ -44,6 +44,13 @@ variable "rt_name" {
   type        = string
 }
 
+### SSH KEY-PAIR ###
+
+variable "key_pair_name" {
+  description = "Name of the SSH key-pair"
+  type        = string
+}
+
 ### IAM ###
 
 variable "iam_role_name" {
@@ -164,12 +171,12 @@ module "network_stack" {
 # INFO: Create SSH key pair
 
 resource "aws_key_pair" "ghost" {
-  key_name   = "ghost-ec2-pool"
+  key_name   = var.key_pair_name
   public_key = var.ssh_public_key
 
   tags = {
-    Name    = "ghost-ec2-pool"
-    Project = "cloudx"
+    Name    = var.key_pair_name
+    Project = var.project
   }
 }
 
