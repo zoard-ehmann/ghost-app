@@ -34,7 +34,10 @@ resource "aws_iam_policy" "this" {
         "ec2:Describe*",
         "elasticfilesystem:ClientMount",
         "elasticfilesystem:ClientWrite",
-        "elasticfilesystem:DescribeFileSystems"
+        "elasticfilesystem:DescribeFileSystems",
+        "ssm:GetParameter*",
+        "secretsmanager:GetSecretValue",
+        "kms:Decrypt"
       ],
       "Effect": "Allow",
       "Resource": "*"
