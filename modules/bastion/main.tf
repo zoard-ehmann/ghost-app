@@ -33,7 +33,7 @@ resource "aws_instance" "this" {
   instance_type               = "t2.micro"
   ami                         = "ami-026b57f3c383c2eec"
   associate_public_ip_address = true
-  vpc_security_group_ids      = var.vpc_security_group_ids
+  vpc_security_group_ids      = [aws_security_group.this.id]
   key_name                    = var.key_name
   subnet_id                   = var.subnet_id
   user_data_replace_on_change = true

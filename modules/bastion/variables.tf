@@ -8,11 +8,6 @@ variable "ingress_cidr_blocks" {
   type        = list(string)
 }
 
-variable "vpc_security_group_ids" {
-  description = "IDs of the security groups"
-  type        = list(string)
-}
-
 variable "key_name" {
   description = "Name of SSH public key"
   type        = string
