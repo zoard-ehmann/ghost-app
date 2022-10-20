@@ -156,6 +156,13 @@ variable "bastion_name" {
   type        = string
 }
 
+### RDS DB ###
+
+variable "rds_sg_name" {
+  description = "RDS security group name"
+  type        = string
+}
+
 # INFO: Set up data sources
 
 data "http" "host_ip" {
@@ -300,4 +307,16 @@ module "bastion" {
   project         = var.project
   bastion_sg_name = var.bastion_sg_name
   bastion_name    = var.bastion_name
+}
+
+# INFO: Create database on RDS
+
+module "rds_database" {
+  source = "./modules/rds_database"
+
+  vpc_id         = module.network_stack.vpc_id
+  ec2_pool_sg_id = module.auto_scaling_group.sg_id
+
+  project     = var.project
+  rds_sg_name = var.rds_sg_name
 }

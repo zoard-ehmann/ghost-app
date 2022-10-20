@@ -39,3 +39,6 @@ asg_instance_name    = "ghost-instance"
 # Bastion
 bastion_sg_name = "bastion"
 bastion_name    = "bastion"
+
+# RDS
+rds_sg_name = "mysql"
