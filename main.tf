@@ -201,13 +201,17 @@ provider "aws" {
 module "network_stack" {
   source = "./modules/network_stack"
 
-  project        = var.project
-  vpc_name       = var.vpc_name
-  subnet_a_name  = var.subnet_a_name
-  subnet_b_name  = var.subnet_b_name
-  subnet_c_name  = var.subnet_c_name
-  igw_name       = var.igw_name
-  public_rt_name = var.public_rt_name
+  project          = var.project
+  vpc_name         = var.vpc_name
+  subnet_a_name    = var.subnet_a_name
+  subnet_b_name    = var.subnet_b_name
+  subnet_c_name    = var.subnet_c_name
+  subnet_db_a_name = var.subnet_db_a_name
+  subnet_db_b_name = var.subnet_db_b_name
+  subnet_db_c_name = var.subnet_db_c_name
+  igw_name         = var.igw_name
+  public_rt_name   = var.public_rt_name
+  private_rt_name  = var.private_rt_name
 }
 
 # INFO: Create SSH key pair
