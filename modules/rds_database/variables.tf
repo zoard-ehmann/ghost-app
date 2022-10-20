@@ -13,6 +13,16 @@ variable "db_subnet_ids" {
   type        = list(string)
 }
 
+variable "db_username" {
+  description = "Username of DB user"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Password of DB user"
+  type        = string
+}
+
 # Tags
 
 variable "project" {
@@ -32,5 +42,10 @@ variable "db_subnet_grp_name" {
 
 variable "db_name" {
   description = "Name of DB"
+  type        = string
+}
+
+variable "ssm_parameter_name" {
+  description = "Name of SSM parameter"
   type        = string
 }

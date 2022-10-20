@@ -36,9 +36,26 @@ resource "aws_db_instance" "this" {
   engine                 = "mysql"
   engine_version         = "8.0"
   instance_class         = "db.t2.micro"
-  username               = "#TODO"
-  password               = "#TODO"
+  username               = var.db_username
+  password               = var.db_password
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.this.id]
   db_subnet_group_name   = aws_db_subnet_group.this.name
+
+  tags = {
+    Name    = var.db_name
+    Project = var.project
+  }
+}
+
+resource "aws_ssm_parameter" "this" {
+  name        = "/${var.db_username}/dbpasswd"
+  description = "The parameter description"
+  type        = "SecureString"
+  value       = var.db_password
+
+  tags = {
+    Name    = var.ssm_parameter_name
+    Project = var.project
+  }
 }

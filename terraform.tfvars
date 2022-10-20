@@ -41,6 +41,8 @@ bastion_sg_name = "bastion"
 bastion_name    = "bastion"
 
 # RDS
+db_username        = "ghost"
 rds_sg_name        = "mysql"
 db_subnet_grp_name = "ghost"
 db_name            = "ghost"
+ssm_parameter_name = "ghost"

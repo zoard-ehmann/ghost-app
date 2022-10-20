@@ -146,6 +146,16 @@ variable "asg_instance_name" {
 
 ### BASTION ###
 
+variable "db_username" {
+  description = "Username of DB user"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Password of DB user"
+  type        = string
+}
+
 variable "bastion_sg_name" {
   description = "Bastion security group name"
   type        = string
@@ -153,6 +163,11 @@ variable "bastion_sg_name" {
 
 variable "bastion_name" {
   description = "Name of the bastion instance"
+  type        = string
+}
+
+variable "ssm_parameter_name" {
+  description = "Name of SSM parameter"
   type        = string
 }
 
@@ -336,9 +351,12 @@ module "rds_database" {
     module.network_stack.subnet_db_c_id
   ]
 
-  db_name = var.db_name
+  db_name     = var.db_name
+  db_username = var.db_username
+  db_password = var.db_password
 
   project            = var.project
   rds_sg_name        = var.rds_sg_name
   db_subnet_grp_name = var.db_subnet_grp_name
+  ssm_parameter_name = var.ssm_parameter_name
 }
