@@ -9,6 +9,11 @@ subnet_c_name = "public_c"
 igw_name      = "cloudx-igw"
 rt_name       = "public_rt"
 
+# IAM
+iam_role_name    = "ghost_app_role"
+iam_policy_name  = "ghost_app"
+iam_profile_name = "ghost_app_profile"
+
 # EFS
 efs_sg_name = "efs"
 efs_name    = "ghost_content"

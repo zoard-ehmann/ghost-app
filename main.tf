@@ -44,6 +44,23 @@ variable "rt_name" {
   type        = string
 }
 
+### IAM ###
+
+variable "iam_role_name" {
+  description = "Name of the IAM role"
+  type        = string
+}
+
+variable "iam_policy_name" {
+  description = "Name of the IAM policy"
+  type        = string
+}
+
+variable "iam_profile_name" {
+  description = "Name of the IAM instance profile"
+  type        = string
+}
+
 ### EFS ###
 
 variable "efs_sg_name" {
@@ -158,65 +175,13 @@ resource "aws_key_pair" "ghost" {
 
 # INFO: Create IAM role
 
-resource "aws_iam_role" "ghost" {
-  name = "ghost_app_role"
+module "iam" {
+  source = "./modules/iam"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
-
-  tags = {
-    Name    = "ghost_app_role"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_iam_policy" "ghost" {
-  name        = "ghost_app"
-  description = "Allows EC2 Describe*, EFS DescribeFS, EFS ClientMount & ClientWrite"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:Describe*",
-        "elasticfilesystem:ClientMount",
-        "elasticfilesystem:ClientWrite",
-        "elasticfilesystem:DescribeFileSystems"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
-
-  tags = {
-    Name    = "ghost_app"
-    Project = "cloudx"
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ghost" {
-  role       = aws_iam_role.ghost.name
-  policy_arn = aws_iam_policy.ghost.arn
-}
-
-resource "aws_iam_instance_profile" "ghost" {
-  name = "ghost_app_profile"
-  role = aws_iam_role.ghost.name
+  project          = var.project
+  iam_role_name    = var.iam_role_name
+  iam_policy_name  = var.iam_policy_name
+  iam_profile_name = var.iam_profile_name
 }
 
 # INFO: Create elastic file system
@@ -270,7 +235,7 @@ module "auto_scaling_group" {
   alb_sg_id           = module.load_balancer.sg_id
 
   key_name        = aws_key_pair.ghost.key_name
-  iam_profile_arn = aws_iam_instance_profile.ghost.arn
+  iam_profile_arn = module.iam.iam_profile_arn
   lb_dns_name     = module.load_balancer.lb_dns_name
 
   vpc_zone_identifier = [
