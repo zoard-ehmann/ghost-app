@@ -163,6 +163,16 @@ variable "rds_sg_name" {
   type        = string
 }
 
+variable "db_subnet_grp_name" {
+  description = "Name of DB subnet group"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Name of DB"
+  type        = string
+}
+
 # INFO: Set up data sources
 
 data "http" "host_ip" {
@@ -298,11 +308,10 @@ module "bastion" {
   vpc_id              = module.network_stack.vpc_id
   ingress_cidr_blocks = ["${chomp(data.http.host_ip.response_body)}/32"]
 
-  vpc_security_group_ids = [module.bastion.sg_id]
-  key_name               = aws_key_pair.ghost.key_name
-  subnet_id              = module.network_stack.subnet_a_id
-  host_username          = var.host_username
-  key_pair_name          = var.key_pair_name
+  key_name      = aws_key_pair.ghost.key_name
+  subnet_id     = module.network_stack.subnet_a_id
+  host_username = var.host_username
+  key_pair_name = var.key_pair_name
 
   project         = var.project
   bastion_sg_name = var.bastion_sg_name
@@ -317,6 +326,15 @@ module "rds_database" {
   vpc_id         = module.network_stack.vpc_id
   ec2_pool_sg_id = module.auto_scaling_group.sg_id
 
-  project     = var.project
-  rds_sg_name = var.rds_sg_name
+  db_subnet_ids = [
+    module.network_stack.subnet_db_a_id,
+    module.network_stack.subnet_db_b_id,
+    module.network_stack.subnet_db_c_id
+  ]
+
+  db_name = var.db_name
+
+  project            = var.project
+  rds_sg_name        = var.rds_sg_name
+  db_subnet_grp_name = var.db_subnet_grp_name
 }

@@ -18,3 +18,27 @@ resource "aws_security_group_rule" "ingress_ec2_pool" {
   source_security_group_id = var.ec2_pool_sg_id
   security_group_id        = aws_security_group.this.id
 }
+
+resource "aws_db_subnet_group" "this" {
+  name        = var.db_subnet_grp_name
+  description = "Database subnet group"
+  subnet_ids  = var.db_subnet_ids
+
+  tags = {
+    Name    = var.db_subnet_grp_name
+    Project = var.project
+  }
+}
+
+resource "aws_db_instance" "this" {
+  allocated_storage      = 20
+  db_name                = var.db_name
+  engine                 = "mysql"
+  engine_version         = "8.0"
+  instance_class         = "db.t2.micro"
+  username               = "#TODO"
+  password               = "#TODO"
+  skip_final_snapshot    = true
+  vpc_security_group_ids = [aws_security_group.this.id]
+  db_subnet_group_name   = aws_db_subnet_group.this.name
+}
