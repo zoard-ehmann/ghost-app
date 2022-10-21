@@ -84,6 +84,21 @@ resource "aws_autoscaling_group" "this" {
   min_size            = 2
   desired_capacity    = 2
   vpc_zone_identifier = var.vpc_zone_identifier
+  target_group_arns   = [var.lb_target_group_arn]
+
+  # BUG
+  # ------------------------------ #
+  # Manual refresh is required in case of launch template change
+  # The following feature is not working at the moment:
+  # https://github.com/hashicorp/terraform-provider-aws/issues/23274
+  instance_refresh {
+    strategy = "Rolling"
+
+    preferences {
+      min_healthy_percentage = 50
+    }
+  }
+  # ------------------------------ #
 
   launch_template {
     id      = aws_launch_template.this.id
@@ -101,9 +116,4 @@ resource "aws_autoscaling_group" "this" {
     value               = var.project
     propagate_at_launch = true
   }
-}
-
-resource "aws_autoscaling_attachment" "this" {
-  autoscaling_group_name = aws_autoscaling_group.this.id
-  lb_target_group_arn    = var.lb_target_group_arn
 }
