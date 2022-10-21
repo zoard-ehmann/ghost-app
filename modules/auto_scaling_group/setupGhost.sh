@@ -45,7 +45,7 @@ cat << EOF > config.development.json
   },
   "process": "local",
   "paths": {
-    "contentPath": "/home/ghost/content"
+    "contentPath": "/home/ghost_user/content"
   }
 }
 EOF
