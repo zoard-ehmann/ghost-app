@@ -33,6 +33,21 @@ variable "lb_dns_name" {
   type        = string
 }
 
+variable "db_url" {
+  description = "URL of the database"
+  type        = string
+}
+
+variable "db_username" {
+  description = "Username of DB user"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Name of DB"
+  type        = string
+}
+
 variable "vpc_zone_identifier" {
   description = "Subnets of the VPC"
   type        = list(string)

@@ -72,6 +72,9 @@ resource "aws_launch_template" "this" {
 
   user_data = base64encode(templatefile("${path.module}/setupGhost.sh", {
     lb_dns_name = var.lb_dns_name
+    db_url      = var.db_url
+    db_username = var.db_username
+    db_name     = var.db_name
   }))
 }
 

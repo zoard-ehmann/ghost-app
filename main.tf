@@ -146,16 +146,6 @@ variable "asg_instance_name" {
 
 ### BASTION ###
 
-variable "db_username" {
-  description = "Username of DB user"
-  type        = string
-}
-
-variable "db_password" {
-  description = "Password of DB user"
-  type        = string
-}
-
 variable "bastion_sg_name" {
   description = "Bastion security group name"
   type        = string
@@ -185,6 +175,16 @@ variable "db_subnet_grp_name" {
 
 variable "db_name" {
   description = "Name of DB"
+  type        = string
+}
+
+variable "db_username" {
+  description = "Username of DB user"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Password of DB user"
   type        = string
 }
 
@@ -252,24 +252,6 @@ module "iam" {
   iam_profile_name = var.iam_profile_name
 }
 
-# INFO: Create elastic file system
-
-module "efs" {
-  source = "./modules/efs"
-
-  vpc_id             = module.network_stack.vpc_id
-  ec2_pool_sg_id     = module.auto_scaling_group.sg_id
-  egress_cidr_blocks = [module.network_stack.vpc_cidr]
-
-  subnet_a_id = module.network_stack.subnet_a_id
-  subnet_b_id = module.network_stack.subnet_b_id
-  subnet_c_id = module.network_stack.subnet_c_id
-
-  project     = var.project
-  efs_sg_name = var.efs_sg_name
-  efs_name    = var.efs_name
-}
-
 # INFO: Create application load balancer
 
 module "load_balancer" {
@@ -305,6 +287,9 @@ module "auto_scaling_group" {
   key_name        = aws_key_pair.ghost.key_name
   iam_profile_arn = module.iam.iam_profile_arn
   lb_dns_name     = module.load_balancer.lb_dns_name
+  db_url          = module.rds_database.db_url
+  db_username     = var.db_username
+  db_name         = var.db_name
 
   vpc_zone_identifier = [
     module.network_stack.subnet_a_id,
