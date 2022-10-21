@@ -93,18 +93,6 @@ variable "iam_profile_name" {
   type        = string
 }
 
-### EFS ###
-
-variable "efs_sg_name" {
-  description = "Elastic file system security group name"
-  type        = string
-}
-
-variable "efs_name" {
-  description = "Name of elastic file system"
-  type        = string
-}
-
 ### LOAD BALANCER ###
 
 variable "alb_sg_name" {

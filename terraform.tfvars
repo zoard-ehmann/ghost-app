@@ -21,10 +21,6 @@ iam_role_name    = "ghost_app_role"
 iam_policy_name  = "ghost_app"
 iam_profile_name = "ghost_app_profile"
 
-# EFS
-efs_sg_name = "efs"
-efs_name    = "ghost_content"
-
 # Load balancer
 alb_sg_name   = "alb"
 alb_name      = "ghost-alb"
