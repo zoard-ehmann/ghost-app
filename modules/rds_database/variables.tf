@@ -23,7 +23,7 @@ variable "db_password" {
   type        = string
 }
 
-# Tags
+# INFO: Tags
 
 variable "project" {
   description = "Name of the project"

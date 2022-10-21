@@ -58,7 +58,7 @@ variable "lb_target_group_arn" {
   type        = string
 }
 
-# Tags
+# INFO: Tags
 
 variable "project" {
   description = "Name of the project"

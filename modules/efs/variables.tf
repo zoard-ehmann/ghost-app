@@ -28,7 +28,7 @@ variable "subnet_c_id" {
   type        = string
 }
 
-# Tags
+# INFO: Tags
 
 variable "project" {
   description = "Name of the project"

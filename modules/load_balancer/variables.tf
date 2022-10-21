@@ -18,7 +18,7 @@ variable "subnets" {
   type        = list(string)
 }
 
-# Tags
+# INFO: Tags
 
 variable "project" {
   description = "Name of the project"
