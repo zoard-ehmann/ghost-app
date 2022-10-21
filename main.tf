@@ -188,6 +188,18 @@ variable "db_password" {
   type        = string
 }
 
+# INFO: Set outputs
+
+output "lb_dns_name" {
+  description = "DNS name of the ALB"
+  value       = module.load_balancer.lb_dns_name
+}
+
+output "bastion_dns" {
+  description = "DNS of the bastion"
+  value       = module.bastion.bastion_dns
+}
+
 # INFO: Set up data sources
 
 data "http" "host_ip" {
