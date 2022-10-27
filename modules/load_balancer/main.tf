@@ -43,13 +43,13 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "this" {
-  name     = var.tg_name
+  name     = var.ec2_tg_name
   port     = 2368
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 
   tags = {
-    Name    = var.tg_name
+    Name    = var.ec2_tg_name
     Project = var.project
   }
 }

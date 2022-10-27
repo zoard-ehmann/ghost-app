@@ -115,7 +115,7 @@ variable "alb_name" {
   type        = string
 }
 
-variable "tg_name" {
+variable "ec2_tg_name" {
   description = "Name of the target group"
   type        = string
 }
@@ -333,7 +333,7 @@ module "load_balancer" {
   project       = var.project
   alb_sg_name   = var.alb_sg_name
   alb_name      = var.alb_name
-  tg_name       = var.tg_name
+  ec2_tg_name   = var.ec2_tg_name
   listener_name = var.listener_name
 }
 

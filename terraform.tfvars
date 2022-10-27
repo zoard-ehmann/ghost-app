@@ -26,7 +26,7 @@ efs_name    = "ghost_content"
 # Load balancer
 alb_sg_name   = "alb"
 alb_name      = "ghost-alb"
-tg_name       = "ghost-ec2"
+ec2_tg_name   = "ghost-ec2"
 listener_name = "ghost-alb-listener"
 
 # Auto-scaling group

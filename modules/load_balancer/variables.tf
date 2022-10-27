@@ -35,7 +35,7 @@ variable "alb_name" {
   type        = string
 }
 
-variable "tg_name" {
+variable "ec2_tg_name" {
   description = "Name of the target group"
   type        = string
 }
