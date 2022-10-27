@@ -203,6 +203,13 @@ variable "db_password" {
   type        = string
 }
 
+### ECS ###
+
+variable "ecs_sg_name" {
+  description = "Fargate pool security group name"
+  type        = string
+}
+
 # INFO: Set outputs
 
 output "lb_dns_name" {
@@ -286,6 +293,7 @@ module "efs" {
 
   vpc_id             = module.network_stack.vpc_id
   ec2_pool_sg_id     = module.auto_scaling_group.sg_id
+  fargate_pool_sg_id = module.ecs_fargate.sg_id
   egress_cidr_blocks = [module.network_stack.vpc_cidr]
 
   subnet_a_id = module.network_stack.subnet_a_id
@@ -372,8 +380,9 @@ module "bastion" {
 module "rds_database" {
   source = "./modules/rds_database"
 
-  vpc_id         = module.network_stack.vpc_id
-  ec2_pool_sg_id = module.auto_scaling_group.sg_id
+  vpc_id             = module.network_stack.vpc_id
+  ec2_pool_sg_id     = module.auto_scaling_group.sg_id
+  fargate_pool_sg_id = module.ecs_fargate.sg_id
 
   db_subnet_ids = [
     module.network_stack.subnet_db_a_id,
@@ -389,4 +398,17 @@ module "rds_database" {
   rds_sg_name        = var.rds_sg_name
   db_subnet_grp_name = var.db_subnet_grp_name
   ssm_parameter_name = var.ssm_parameter_name
+}
+
+# INFO: Create ECS Fargate
+
+module "ecs_fargate" {
+  source = "./modules/ecs_fargate"
+
+  vpc_id    = module.network_stack.vpc_id
+  efs_sg_id = module.efs.sg_id
+  alb_sg_id = module.load_balancer.sg_id
+
+  project     = var.project
+  ecs_sg_name = var.ecs_sg_name
 }

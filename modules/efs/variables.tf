@@ -8,6 +8,11 @@ variable "ec2_pool_sg_id" {
   type        = string
 }
 
+variable "fargate_pool_sg_id" {
+  description = "ID of Fargate pool security group"
+  type        = string
+}
+
 variable "egress_cidr_blocks" {
   description = "CIDR blocks for egress traffic"
   type        = list(string)

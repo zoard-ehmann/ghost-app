@@ -19,6 +19,16 @@ resource "aws_security_group_rule" "ingress_ec2_pool" {
   security_group_id        = aws_security_group.this.id
 }
 
+resource "aws_security_group_rule" "ingress_fargate_pool" {
+  description              = "Allows access from Fargate pool"
+  type                     = "ingress"
+  from_port                = 2049
+  to_port                  = 2049
+  protocol                 = "tcp"
+  source_security_group_id = var.fargate_pool_sg_id
+  security_group_id        = aws_security_group.this.id
+}
+
 resource "aws_security_group_rule" "egress_vpc" {
   description       = "Allows traffic to VPC"
   type              = "egress"

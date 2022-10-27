@@ -49,3 +49,6 @@ rds_sg_name        = "mysql"
 db_subnet_grp_name = "ghost"
 db_name            = "ghost"
 ssm_parameter_name = "ghost"
+
+# ECS Fargate
+ecs_sg_name = "fargate_pool"
