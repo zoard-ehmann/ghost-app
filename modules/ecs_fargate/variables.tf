@@ -29,3 +29,18 @@ variable "ecr_name" {
   description = "Name of ECR"
   type        = string
 }
+
+variable "ecs_iam_role_name" {
+  description = "Name of the ECS IAM role"
+  type        = string
+}
+
+variable "ecs_iam_policy_name" {
+  description = "Name of the ECS IAM policy"
+  type        = string
+}
+
+variable "ecs_iam_profile_name" {
+  description = "Name of the ECS IAM instance profile"
+  type        = string
+}
