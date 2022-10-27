@@ -42,6 +42,7 @@ resource "aws_security_group_rule" "egress_anywhere" {
 resource "aws_ecr_repository" "this" {
   name                 = var.ecr_name
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = false
