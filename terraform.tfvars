@@ -19,11 +19,6 @@ private_rt_name   = "private_rt"
 # SSH key-pair
 key_pair_name = "ghost-ec2-pool"
 
-# IAM
-iam_role_name    = "ghost_app_role"
-iam_policy_name  = "ghost_app"
-iam_profile_name = "ghost_app_profile"
-
 # EFS
 efs_sg_name = "efs"
 efs_name    = "ghost_content"
@@ -35,6 +30,9 @@ tg_name       = "ghost-ec2"
 listener_name = "ghost-alb-listener"
 
 # Auto-scaling group
+asg_iam_role_name    = "ghost_app_role"
+asg_iam_policy_name  = "ghost_app"
+asg_iam_profile_name = "ghost_app_profile"
 ec2_pool_sg_name     = "ec2_pool"
 launch_template_name = "ghost"
 asg_instance_name    = "ghost-instance"

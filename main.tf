@@ -91,23 +91,6 @@ variable "key_pair_name" {
   type        = string
 }
 
-### IAM ###
-
-variable "iam_role_name" {
-  description = "Name of the IAM role"
-  type        = string
-}
-
-variable "iam_policy_name" {
-  description = "Name of the IAM policy"
-  type        = string
-}
-
-variable "iam_profile_name" {
-  description = "Name of the IAM instance profile"
-  type        = string
-}
-
 ### EFS ###
 
 variable "efs_sg_name" {
@@ -143,6 +126,21 @@ variable "listener_name" {
 }
 
 ### AUTO-SCALING GROUP ###
+
+variable "asg_iam_role_name" {
+  description = "Name of the IAM role"
+  type        = string
+}
+
+variable "asg_iam_policy_name" {
+  description = "Name of the IAM policy"
+  type        = string
+}
+
+variable "asg_iam_profile_name" {
+  description = "Name of the IAM instance profile"
+  type        = string
+}
 
 variable "ec2_pool_sg_name" {
   description = "EC2 pool security group name"
@@ -283,17 +281,6 @@ resource "aws_key_pair" "ghost" {
   }
 }
 
-# INFO: Create IAM role
-
-module "iam" {
-  source = "./modules/iam"
-
-  project          = var.project
-  iam_role_name    = var.iam_role_name
-  iam_policy_name  = var.iam_policy_name
-  iam_profile_name = var.iam_profile_name
-}
-
 # INFO: Create elastic file system
 
 module "efs" {
@@ -345,12 +332,11 @@ module "auto_scaling_group" {
   ingress_cidr_blocks = [module.network_stack.vpc_cidr]
   alb_sg_id           = module.load_balancer.sg_id
 
-  key_name        = aws_key_pair.ghost.key_name
-  iam_profile_arn = module.iam.iam_profile_arn
-  lb_dns_name     = module.load_balancer.lb_dns_name
-  db_url          = module.rds_database.db_url
-  db_username     = var.db_username
-  db_name         = var.db_name
+  key_name    = aws_key_pair.ghost.key_name
+  lb_dns_name = module.load_balancer.lb_dns_name
+  db_url      = module.rds_database.db_url
+  db_username = var.db_username
+  db_name     = var.db_name
 
   vpc_zone_identifier = [
     module.network_stack.subnet_a_id,
@@ -360,6 +346,9 @@ module "auto_scaling_group" {
   lb_target_group_arn = module.load_balancer.lb_target_group_arn
 
   project              = var.project
+  asg_iam_role_name    = var.asg_iam_role_name
+  asg_iam_policy_name  = var.asg_iam_policy_name
+  asg_iam_profile_name = var.asg_iam_profile_name
   ec2_pool_sg_name     = var.ec2_pool_sg_name
   launch_template_name = var.launch_template_name
   asg_instance_name    = var.asg_instance_name

@@ -23,11 +23,6 @@ variable "key_name" {
   type        = string
 }
 
-variable "iam_profile_arn" {
-  description = "ARN of the IAM instance profile"
-  type        = string
-}
-
 variable "lb_dns_name" {
   description = "DNS name of the ALB"
   type        = string
@@ -62,6 +57,21 @@ variable "lb_target_group_arn" {
 
 variable "project" {
   description = "Name of the project"
+  type        = string
+}
+
+variable "asg_iam_role_name" {
+  description = "Name of the IAM role"
+  type        = string
+}
+
+variable "asg_iam_policy_name" {
+  description = "Name of the IAM policy"
+  type        = string
+}
+
+variable "asg_iam_profile_name" {
+  description = "Name of the IAM instance profile"
   type        = string
 }
 

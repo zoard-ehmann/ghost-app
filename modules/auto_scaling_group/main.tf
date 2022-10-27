@@ -1,3 +1,72 @@
+resource "aws_iam_role" "this" {
+  name = var.asg_iam_role_name
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = {
+    Name    = var.asg_iam_role_name
+    Project = var.project
+  }
+}
+
+resource "aws_iam_policy" "this" {
+  name        = var.asg_iam_policy_name
+  description = "Allows EC2 Describe*, EFS DescribeFS, EFS ClientMount & ClientWrite"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:Describe*",
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:DescribeFileSystems",
+        "ssm:GetParameter*",
+        "secretsmanager:GetSecretValue",
+        "kms:Decrypt"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+
+  tags = {
+    Name    = var.asg_iam_policy_name
+    Project = var.project
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "this" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.this.arn
+}
+
+resource "aws_iam_instance_profile" "this" {
+  name = var.asg_iam_profile_name
+  role = aws_iam_role.this.name
+
+  tags = {
+    Name    = var.asg_iam_profile_name
+    Project = var.project
+  }
+}
+
 resource "aws_security_group" "this" {
   name        = var.ec2_pool_sg_name
   description = "Allows access to EC2 instances"
@@ -58,7 +127,7 @@ resource "aws_launch_template" "this" {
   update_default_version = true
 
   iam_instance_profile {
-    arn = var.iam_profile_arn
+    arn = aws_iam_instance_profile.this.arn
   }
 
   tag_specifications {
