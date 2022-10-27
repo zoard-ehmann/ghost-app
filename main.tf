@@ -128,17 +128,17 @@ variable "listener_name" {
 ### AUTO-SCALING GROUP ###
 
 variable "asg_iam_role_name" {
-  description = "Name of the IAM role"
+  description = "Name of the ASG IAM role"
   type        = string
 }
 
 variable "asg_iam_policy_name" {
-  description = "Name of the IAM policy"
+  description = "Name of the ASG IAM policy"
   type        = string
 }
 
 variable "asg_iam_profile_name" {
-  description = "Name of the IAM instance profile"
+  description = "Name of the ASG IAM instance profile"
   type        = string
 }
 
@@ -210,6 +210,21 @@ variable "ecs_sg_name" {
 
 variable "ecr_name" {
   description = "Name of ECR"
+  type        = string
+}
+
+variable "ecs_iam_role_name" {
+  description = "Name of the ECS IAM role"
+  type        = string
+}
+
+variable "ecs_iam_policy_name" {
+  description = "Name of the ECS IAM policy"
+  type        = string
+}
+
+variable "ecs_iam_profile_name" {
+  description = "Name of the ECS IAM instance profile"
   type        = string
 }
 
@@ -406,7 +421,10 @@ module "ecs_fargate" {
   efs_sg_id = module.efs.sg_id
   alb_sg_id = module.load_balancer.sg_id
 
-  project     = var.project
-  ecs_sg_name = var.ecs_sg_name
-  ecr_name    = var.ecr_name
+  project              = var.project
+  ecs_sg_name          = var.ecs_sg_name
+  ecr_name             = var.ecr_name
+  ecs_iam_role_name    = var.ecs_iam_role_name
+  ecs_iam_policy_name  = var.ecs_iam_policy_name
+  ecs_iam_profile_name = var.ecs_iam_profile_name
 }

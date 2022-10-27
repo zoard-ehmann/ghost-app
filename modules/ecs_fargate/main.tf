@@ -52,3 +52,72 @@ resource "aws_ecr_repository" "this" {
     Project = var.project
   }
 }
+
+resource "aws_iam_role" "this" {
+  name = var.ecs_iam_role_name
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = {
+    Name    = var.ecs_iam_role_name
+    Project = var.project
+  }
+}
+
+resource "aws_iam_policy" "this" {
+  name        = var.ecs_iam_policy_name
+  description = "Allows ECR Gets, EFS DescribeFS, ClientMount and ClientWrite"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "elasticfilesystem:DescribeFileSystems",
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+
+  tags = {
+    Name    = var.ecs_iam_policy_name
+    Project = var.project
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "this" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.this.arn
+}
+
+resource "aws_iam_instance_profile" "this" {
+  name = var.ecs_iam_profile_name
+  role = aws_iam_role.this.name
+
+  tags = {
+    Name    = var.ecs_iam_profile_name
+    Project = var.project
+  }
+}

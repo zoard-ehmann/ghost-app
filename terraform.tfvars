@@ -49,5 +49,8 @@ db_name            = "ghost"
 ssm_parameter_name = "ghost"
 
 # ECS Fargate
-ecs_sg_name = "fargate_pool"
-ecr_name    = "ghost"
+ecs_sg_name          = "fargate_pool"
+ecr_name             = "ghost"
+ecs_iam_role_name    = "ghost_ecs_role"
+ecs_iam_policy_name  = "ghost_ecs"
+ecs_iam_profile_name = "ghost_ecs_profile"
