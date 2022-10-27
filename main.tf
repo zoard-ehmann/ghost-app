@@ -93,6 +93,18 @@ variable "iam_profile_name" {
   type        = string
 }
 
+### EFS ###
+
+variable "efs_sg_name" {
+  description = "Elastic file system security group name"
+  type        = string
+}
+
+variable "efs_name" {
+  description = "Name of elastic file system"
+  type        = string
+}
+
 ### LOAD BALANCER ###
 
 variable "alb_sg_name" {
@@ -250,6 +262,24 @@ module "iam" {
   iam_role_name    = var.iam_role_name
   iam_policy_name  = var.iam_policy_name
   iam_profile_name = var.iam_profile_name
+}
+
+# INFO: Create elastic file system
+
+module "efs" {
+  source = "./modules/efs"
+
+  vpc_id             = module.network_stack.vpc_id
+  ec2_pool_sg_id     = module.auto_scaling_group.sg_id
+  egress_cidr_blocks = [module.network_stack.vpc_cidr]
+
+  subnet_a_id = module.network_stack.subnet_a_id
+  subnet_b_id = module.network_stack.subnet_b_id
+  subnet_c_id = module.network_stack.subnet_c_id
+
+  project     = var.project
+  efs_sg_name = var.efs_sg_name
+  efs_name    = var.efs_name
 }
 
 # INFO: Create application load balancer
