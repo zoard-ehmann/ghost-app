@@ -52,3 +52,4 @@ ssm_parameter_name = "ghost"
 
 # ECS Fargate
 ecs_sg_name = "fargate_pool"
+ecr_name    = "ghost"

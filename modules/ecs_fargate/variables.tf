@@ -24,3 +24,8 @@ variable "ecs_sg_name" {
   description = "Fargate pool security group name"
   type        = string
 }
+
+variable "ecr_name" {
+  description = "Name of ECR"
+  type        = string
+}

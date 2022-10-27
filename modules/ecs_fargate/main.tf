@@ -38,3 +38,17 @@ resource "aws_security_group_rule" "egress_anywhere" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.this.id
 }
+
+resource "aws_ecr_repository" "this" {
+  name                 = var.ecr_name
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+
+  tags = {
+    Name    = var.ecr_name
+    Project = var.project
+  }
+}

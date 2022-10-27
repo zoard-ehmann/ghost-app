@@ -210,6 +210,11 @@ variable "ecs_sg_name" {
   type        = string
 }
 
+variable "ecr_name" {
+  description = "Name of ECR"
+  type        = string
+}
+
 # INFO: Set outputs
 
 output "lb_dns_name" {
@@ -414,4 +419,5 @@ module "ecs_fargate" {
 
   project     = var.project
   ecs_sg_name = var.ecs_sg_name
+  ecr_name    = var.ecr_name
 }
