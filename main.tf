@@ -54,6 +54,21 @@ variable "subnet_db_c_name" {
   type        = string
 }
 
+variable "subnet_ecs_a_name" {
+  description = "Name of ECS subnet A"
+  type        = string
+}
+
+variable "subnet_ecs_b_name" {
+  description = "Name of  ECS subnet B"
+  type        = string
+}
+
+variable "subnet_ecs_c_name" {
+  description = "Name of  ECS subnet C"
+  type        = string
+}
+
 variable "igw_name" {
   description = "Name of internet gateway"
   type        = string

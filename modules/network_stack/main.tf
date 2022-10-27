@@ -82,6 +82,39 @@ resource "aws_subnet" "db_c" {
   }
 }
 
+resource "aws_subnet" "ecs_a" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.10.10.0/24"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    Name    = var.subnet_ecs_a_name
+    Project = var.project
+  }
+}
+
+resource "aws_subnet" "ecs_b" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.10.11.0/24"
+  availability_zone = "us-east-1b"
+
+  tags = {
+    Name    = var.subnet_ecs_b_name
+    Project = var.project
+  }
+}
+
+resource "aws_subnet" "ecs_c" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.10.12.0/24"
+  availability_zone = "us-east-1c"
+
+  tags = {
+    Name    = var.subnet_ecs_c_name
+    Project = var.project
+  }
+}
+
 ### IGW ###
 
 resource "aws_internet_gateway" "this" {
@@ -145,5 +178,20 @@ resource "aws_route_table_association" "db_b" {
 
 resource "aws_route_table_association" "db_c" {
   subnet_id      = aws_subnet.db_c.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "ecs_a" {
+  subnet_id      = aws_subnet.ecs_a.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "ecs_b" {
+  subnet_id      = aws_subnet.ecs_b.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "ecs_c" {
+  subnet_id      = aws_subnet.ecs_c.id
   route_table_id = aws_route_table.private.id
 }
