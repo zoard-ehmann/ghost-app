@@ -61,17 +61,17 @@ variable "project" {
 }
 
 variable "asg_iam_role_name" {
-  description = "Name of the IAM role"
+  description = "Name of the ASG IAM role"
   type        = string
 }
 
 variable "asg_iam_policy_name" {
-  description = "Name of the IAM policy"
+  description = "Name of the ASG IAM policy"
   type        = string
 }
 
 variable "asg_iam_profile_name" {
-  description = "Name of the IAM instance profile"
+  description = "Name of the ASG IAM instance profile"
   type        = string
 }
 
