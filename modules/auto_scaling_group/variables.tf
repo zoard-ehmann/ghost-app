@@ -48,8 +48,8 @@ variable "vpc_zone_identifier" {
   type        = list(string)
 }
 
-variable "lb_target_group_arn" {
-  description = "ARN of the target group"
+variable "ec2_lb_target_group_arn" {
+  description = "ARN of the EC2 target group"
   type        = string
 }
 

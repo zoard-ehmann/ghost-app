@@ -116,7 +116,12 @@ variable "alb_name" {
 }
 
 variable "ec2_tg_name" {
-  description = "Name of the target group"
+  description = "Name of the EC2 target group"
+  type        = string
+}
+
+variable "fargate_tg_name" {
+  description = "Name of the Fargate target group"
   type        = string
 }
 
@@ -330,11 +335,12 @@ module "load_balancer" {
   ]
   vpc_id = module.network_stack.vpc_id
 
-  project       = var.project
-  alb_sg_name   = var.alb_sg_name
-  alb_name      = var.alb_name
-  ec2_tg_name   = var.ec2_tg_name
-  listener_name = var.listener_name
+  project         = var.project
+  alb_sg_name     = var.alb_sg_name
+  alb_name        = var.alb_name
+  ec2_tg_name     = var.ec2_tg_name
+  fargate_tg_name = var.fargate_tg_name
+  listener_name   = var.listener_name
 }
 
 # INFO: Create auto-scaling group
@@ -358,7 +364,7 @@ module "auto_scaling_group" {
     module.network_stack.subnet_b_id,
     module.network_stack.subnet_c_id
   ]
-  lb_target_group_arn = module.load_balancer.lb_target_group_arn
+  ec2_lb_target_group_arn = module.load_balancer.ec2_lb_target_group_arn
 
   project              = var.project
   asg_iam_role_name    = var.asg_iam_role_name

@@ -36,7 +36,12 @@ variable "alb_name" {
 }
 
 variable "ec2_tg_name" {
-  description = "Name of the target group"
+  description = "Name of the EC2 target group"
+  type        = string
+}
+
+variable "fargate_tg_name" {
+  description = "Name of the Fargate target group"
   type        = string
 }
 

@@ -153,7 +153,7 @@ resource "aws_autoscaling_group" "this" {
   min_size            = 2
   desired_capacity    = 2
   vpc_zone_identifier = var.vpc_zone_identifier
-  target_group_arns   = [var.lb_target_group_arn]
+  target_group_arns   = [var.ec2_lb_target_group_arn]
 
   # BUG
   # ------------------------------ #

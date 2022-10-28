@@ -24,10 +24,11 @@ efs_sg_name = "efs"
 efs_name    = "ghost_content"
 
 # Load balancer
-alb_sg_name   = "alb"
-alb_name      = "ghost-alb"
-ec2_tg_name   = "ghost-ec2"
-listener_name = "ghost-alb-listener"
+alb_sg_name     = "alb"
+alb_name        = "ghost-alb"
+ec2_tg_name     = "ghost-ec2"
+fargate_tg_name = "ghost-fargate"
+listener_name   = "ghost-alb-listener"
 
 # Auto-scaling group
 asg_iam_role_name    = "ghost_app_role"
