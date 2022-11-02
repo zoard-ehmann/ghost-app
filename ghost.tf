@@ -17,6 +17,11 @@ variable "project" {
   type        = string
 }
 
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
 ### NETWORK STACK ###
 
 variable "vpc_name" {
@@ -81,6 +86,11 @@ variable "public_rt_name" {
 
 variable "private_rt_name" {
   description = "Name of private route table"
+  type        = string
+}
+
+variable "vpc_sg_name" {
+  description = "VPC security group name"
   type        = string
 }
 
@@ -251,6 +261,8 @@ data "http" "host_ip" {
   url = "http://ipv4.icanhazip.com"
 }
 
+data "aws_region" "current" {}
+
 # INFO: Set up provider
 
 terraform {
@@ -264,7 +276,7 @@ terraform {
 
 provider "aws" {
   profile = "default"
-  region  = "us-east-1"
+  region  = var.region
 }
 
 
@@ -272,6 +284,8 @@ provider "aws" {
 
 module "network_stack" {
   source = "./modules/network_stack"
+
+  region = data.aws_region.current.name
 
   project           = var.project
   vpc_name          = var.vpc_name
@@ -287,6 +301,7 @@ module "network_stack" {
   igw_name          = var.igw_name
   public_rt_name    = var.public_rt_name
   private_rt_name   = var.private_rt_name
+  vpc_sg_name       = var.vpc_sg_name
 }
 
 # INFO: Create SSH key pair

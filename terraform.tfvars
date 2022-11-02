@@ -1,5 +1,6 @@
 # Common
 project = "cloudx"
+region  = "us-east-1"
 
 # Network stack
 vpc_name          = "cloudx"
@@ -15,6 +16,7 @@ subnet_ecs_c_name = "private_ecs_c"
 igw_name          = "cloudx-igw"
 public_rt_name    = "public_rt"
 private_rt_name   = "private_rt"
+vpc_sg_name       = "vpc_endpoint"
 
 # SSH key-pair
 key_pair_name = "ghost-ec2-pool"

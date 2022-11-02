@@ -69,3 +69,13 @@ variable "private_rt_name" {
   description = "Name of private route table"
   type        = string
 }
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
+variable "vpc_sg_name" {
+  description = "VPC security group name"
+  type        = string
+}
