@@ -53,6 +53,11 @@ variable "ec2_lb_target_group_arn" {
   type        = string
 }
 
+variable "ghost_version" {
+  description = "Version of Ghost app"
+  type        = string
+}
+
 # INFO: Tags
 
 variable "project" {

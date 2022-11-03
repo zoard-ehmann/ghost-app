@@ -22,6 +22,11 @@ variable "region" {
   type        = string
 }
 
+variable "ghost_version" {
+  description = "Version of Ghost app"
+  type        = string
+}
+
 ### NETWORK STACK ###
 
 variable "vpc_name" {
@@ -243,6 +248,36 @@ variable "ecs_iam_profile_name" {
   type        = string
 }
 
+variable "ecs_cluster_name" {
+  description = "Name of ECS cluster"
+  type        = string
+}
+
+variable "ecs_task_def_name" {
+  description = "Name of ECS task definition"
+  type        = string
+}
+
+variable "volume_name" {
+  description = "Name of volume"
+  type        = string
+}
+
+variable "container_name" {
+  description = "Name of the container"
+  type        = string
+}
+
+variable "image_name" {
+  description = "Name of the app image"
+  type        = string
+}
+
+variable "service_name" {
+  description = "Name of the service"
+  type        = string
+}
+
 # INFO: Set outputs
 
 output "lb_dns_name" {
@@ -342,6 +377,7 @@ module "load_balancer" {
 
   ingress_cidr_blocks = ["${chomp(data.http.host_ip.response_body)}/32"]
   ec2_pool_sg_id      = module.auto_scaling_group.sg_id
+  fargate_pool_sg_id  = module.ecs_fargate.sg_id
 
   subnets = [
     module.network_stack.subnet_a_id,
@@ -368,11 +404,12 @@ module "auto_scaling_group" {
   ingress_cidr_blocks = [module.network_stack.vpc_cidr]
   alb_sg_id           = module.load_balancer.sg_id
 
-  key_name    = aws_key_pair.ghost.key_name
-  lb_dns_name = module.load_balancer.lb_dns_name
-  db_url      = module.rds_database.db_url
-  db_username = var.db_username
-  db_name     = var.db_name
+  key_name      = aws_key_pair.ghost.key_name
+  lb_dns_name   = module.load_balancer.lb_dns_name
+  db_url        = module.rds_database.db_url
+  db_username   = var.db_username
+  db_name       = var.db_name
+  ghost_version = var.ghost_version
 
   vpc_zone_identifier = [
     module.network_stack.subnet_a_id,
@@ -438,9 +475,21 @@ module "rds_database" {
 module "ecs_fargate" {
   source = "./modules/ecs_fargate"
 
-  vpc_id    = module.network_stack.vpc_id
-  efs_sg_id = module.efs.sg_id
-  alb_sg_id = module.load_balancer.sg_id
+  vpc_id                      = module.network_stack.vpc_id
+  efs_sg_id                   = module.efs.sg_id
+  alb_sg_id                   = module.load_balancer.sg_id
+  efs_id                      = module.efs.efs_id
+  ghost_version               = var.ghost_version
+  db_url                      = module.rds_database.db_url
+  db_username                 = var.db_username
+  db_password                 = var.db_password
+  db_name                     = var.db_name
+  fargate_lb_target_group_arn = module.load_balancer.fargate_lb_target_group_arn
+  ecs_subnets = [
+    module.network_stack.subnet_ecs_a_id,
+    module.network_stack.subnet_ecs_b_id,
+    module.network_stack.subnet_ecs_c_id
+  ]
 
   project              = var.project
   ecs_sg_name          = var.ecs_sg_name
@@ -448,4 +497,10 @@ module "ecs_fargate" {
   ecs_iam_role_name    = var.ecs_iam_role_name
   ecs_iam_policy_name  = var.ecs_iam_policy_name
   ecs_iam_profile_name = var.ecs_iam_profile_name
+  ecs_cluster_name     = var.ecs_cluster_name
+  ecs_task_def_name    = var.ecs_task_def_name
+  volume_name          = var.volume_name
+  container_name       = var.container_name
+  image_name           = var.image_name
+  service_name         = var.service_name
 }

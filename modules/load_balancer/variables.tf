@@ -13,6 +13,11 @@ variable "ec2_pool_sg_id" {
   type        = string
 }
 
+variable "fargate_pool_sg_id" {
+  description = "ID of Fargate pool security group"
+  type        = string
+}
+
 variable "subnets" {
   description = "Subnets where the ALB operates"
   type        = list(string)

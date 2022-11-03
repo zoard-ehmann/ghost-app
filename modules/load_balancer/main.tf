@@ -29,6 +29,16 @@ resource "aws_security_group_rule" "egress_ec2_pool" {
   security_group_id        = aws_security_group.this.id
 }
 
+resource "aws_security_group_rule" "egress_fargate_pool" {
+  description              = "Allows traffic to Fargate pool"
+  type                     = "egress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = var.fargate_pool_sg_id
+  security_group_id        = aws_security_group.this.id
+}
+
 resource "aws_lb" "this" {
   name               = var.alb_name
   internal           = false
@@ -55,10 +65,11 @@ resource "aws_lb_target_group" "ec2" {
 }
 
 resource "aws_lb_target_group" "fargate" {
-  name     = var.fargate_tg_name
-  port     = 2368
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = var.fargate_tg_name
+  port        = 2368
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
 
   tags = {
     Name    = var.fargate_tg_name

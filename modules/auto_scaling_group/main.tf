@@ -140,18 +140,19 @@ resource "aws_launch_template" "this" {
   }
 
   user_data = base64encode(templatefile("${path.module}/setupGhost.sh", {
-    lb_dns_name = var.lb_dns_name
-    db_url      = var.db_url
-    db_username = var.db_username
-    db_name     = var.db_name
+    lb_dns_name   = var.lb_dns_name
+    db_url        = var.db_url
+    db_username   = var.db_username
+    db_name       = var.db_name
+    ghost_version = var.ghost_version
   }))
 }
 
 resource "aws_autoscaling_group" "this" {
   name                = "ghost_ec2_pool"
-  max_size            = 4
-  min_size            = 2
-  desired_capacity    = 2
+  max_size            = 3
+  min_size            = 1
+  desired_capacity    = 1
   vpc_zone_identifier = var.vpc_zone_identifier
   target_group_arns   = [var.ec2_lb_target_group_arn]
 

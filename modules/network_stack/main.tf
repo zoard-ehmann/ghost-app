@@ -228,21 +228,50 @@ resource "aws_security_group_rule" "ingress_http_vpc" {
 }
 
 resource "aws_vpc_endpoint" "ssm" {
-  vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.${var.region}.ssm"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.this.id]
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${var.region}.ssm"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.this.id]
+  private_dns_enabled = true
+  subnet_ids = [
+    aws_subnet.ecs_a.id,
+    aws_subnet.ecs_b.id,
+    aws_subnet.ecs_c.id
+  ]
 
   tags = {
     Project = var.project
   }
 }
 
-resource "aws_vpc_endpoint" "ecr" {
-  vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.${var.region}.ecr.dkr"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.this.id]
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${var.region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.this.id]
+  private_dns_enabled = true
+  subnet_ids = [
+    aws_subnet.ecs_a.id,
+    aws_subnet.ecs_b.id,
+    aws_subnet.ecs_c.id
+  ]
+
+  tags = {
+    Project = var.project
+  }
+}
+
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${var.region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.this.id]
+  private_dns_enabled = true
+  subnet_ids = [
+    aws_subnet.ecs_a.id,
+    aws_subnet.ecs_b.id,
+    aws_subnet.ecs_c.id
+  ]
 
   tags = {
     Project = var.project
@@ -250,10 +279,16 @@ resource "aws_vpc_endpoint" "ecr" {
 }
 
 resource "aws_vpc_endpoint" "efs" {
-  vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.${var.region}.elasticfilesystem"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.this.id]
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${var.region}.elasticfilesystem"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.this.id]
+  private_dns_enabled = true
+  subnet_ids = [
+    aws_subnet.ecs_a.id,
+    aws_subnet.ecs_b.id,
+    aws_subnet.ecs_c.id
+  ]
 
   tags = {
     Project = var.project
@@ -272,14 +307,18 @@ resource "aws_vpc_endpoint" "s3" {
 }
 
 resource "aws_vpc_endpoint" "logs" {
-  vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.${var.region}.logs"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.this.id]
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${var.region}.logs"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.this.id]
+  private_dns_enabled = true
+  subnet_ids = [
+    aws_subnet.ecs_a.id,
+    aws_subnet.ecs_b.id,
+    aws_subnet.ecs_c.id
+  ]
 
   tags = {
     Project = var.project
   }
 }
-
-# HELP: https://dev.to/danquack/private-fargate-deployment-with-vpc-endpoints-1h0p

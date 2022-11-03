@@ -12,3 +12,8 @@ output "ec2_lb_target_group_arn" {
   description = "ARN of the EC2 target group"
   value       = aws_lb_target_group.ec2.arn
 }
+
+output "fargate_lb_target_group_arn" {
+  description = "ARN of the Fargate target group"
+  value       = aws_lb_target_group.fargate.arn
+}

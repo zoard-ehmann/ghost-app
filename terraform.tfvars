@@ -1,6 +1,7 @@
 # Common
-project = "cloudx"
-region  = "us-east-1"
+project       = "cloudx"
+region        = "us-east-1"
+ghost_version = "4.12"
 
 # Network stack
 vpc_name          = "cloudx"
@@ -57,3 +58,9 @@ ecr_name             = "ghost"
 ecs_iam_role_name    = "ghost_ecs_role"
 ecs_iam_policy_name  = "ghost_ecs"
 ecs_iam_profile_name = "ghost_ecs_profile"
+ecs_cluster_name     = "ghost"
+ecs_task_def_name    = "task_def_ghost"
+volume_name          = "ghost_volume"
+container_name       = "ghost_container"
+image_name           = "ghost:4.12"
+service_name         = "ghost"
