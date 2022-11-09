@@ -33,8 +33,6 @@ variable "subnet_c_id" {
   type        = string
 }
 
-# INFO: Tags
-
 variable "project" {
   description = "Name of the project"
   type        = string

@@ -28,8 +28,6 @@ variable "key_pair_name" {
   type        = string
 }
 
-# INFO: Tags
-
 variable "project" {
   description = "Name of the project"
   type        = string

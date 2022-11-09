@@ -58,8 +58,6 @@ variable "dashboard_iam_policy_arn" {
   type        = string
 }
 
-# INFO: Tags
-
 variable "project" {
   description = "Name of the project"
   type        = string
