@@ -46,34 +46,6 @@ resource "aws_efs_file_system" "this" {
   }
 }
 
-resource "aws_efs_file_system_policy" "policy" {
-  file_system_id = aws_efs_file_system.this.id
-  policy         = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-        "logs:DescribeLogStreams",
-        "logs:CreateLogGroup",
-        "logs:PutRetentionPolicy"
-    ],
-      "Resource": [
-        "${aws_efs_file_system.this.arn}"
-    ]
-  }
- ]
-}
-POLICY
-}
-
 resource "aws_efs_mount_target" "a" {
   file_system_id  = aws_efs_file_system.this.id
   subnet_id       = var.subnet_a_id
