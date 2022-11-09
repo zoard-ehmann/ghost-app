@@ -41,16 +41,17 @@ resource "aws_db_subnet_group" "this" {
 }
 
 resource "aws_db_instance" "this" {
-  allocated_storage      = 20
-  db_name                = var.db_name
-  engine                 = "mysql"
-  engine_version         = "8.0"
-  instance_class         = "db.t2.micro"
-  username               = var.db_username
-  password               = var.db_password
-  skip_final_snapshot    = true
-  vpc_security_group_ids = [aws_security_group.this.id]
-  db_subnet_group_name   = aws_db_subnet_group.this.name
+  allocated_storage               = 20
+  db_name                         = var.db_name
+  engine                          = "mysql"
+  engine_version                  = "8.0"
+  instance_class                  = "db.t2.micro"
+  username                        = var.db_username
+  password                        = var.db_password
+  skip_final_snapshot             = true
+  vpc_security_group_ids          = [aws_security_group.this.id]
+  db_subnet_group_name            = aws_db_subnet_group.this.name
+  enabled_cloudwatch_logs_exports = ["general"]
 
   tags = {
     Name    = var.db_name

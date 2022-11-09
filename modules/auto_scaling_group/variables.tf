@@ -58,6 +58,11 @@ variable "ghost_version" {
   type        = string
 }
 
+variable "dashboard_iam_policy_arn" {
+  description = "ARN of the dashboard IAM policy"
+  type        = string
+}
+
 # INFO: Tags
 
 variable "project" {
@@ -92,5 +97,10 @@ variable "launch_template_name" {
 
 variable "asg_instance_name" {
   description = "Name of the EC2 instances within ASG"
+  type        = string
+}
+
+variable "asg_name" {
+  description = "Name of the ASG"
   type        = string
 }

@@ -177,6 +177,11 @@ variable "asg_instance_name" {
   type        = string
 }
 
+variable "asg_name" {
+  description = "Name of the ASG"
+  type        = string
+}
+
 ### BASTION ###
 
 variable "bastion_sg_name" {
@@ -275,6 +280,18 @@ variable "image_name" {
 
 variable "service_name" {
   description = "Name of the service"
+  type        = string
+}
+
+### DASHBOARD ###
+
+variable "dashboard_iam_policy_name" {
+  description = "Name of the CloudWatch Dashboard IAM policy"
+  type        = string
+}
+
+variable "cw_dashboard_name" {
+  description = "Name of CloudWatch Dashboard"
   type        = string
 }
 
@@ -399,6 +416,8 @@ module "load_balancer" {
 module "auto_scaling_group" {
   source = "./modules/auto_scaling_group"
 
+  dashboard_iam_policy_arn = module.dashboard.dashboard_iam_policy_arn
+
   vpc_id              = module.network_stack.vpc_id
   bastion_sg_id       = module.bastion.sg_id
   ingress_cidr_blocks = [module.network_stack.vpc_cidr]
@@ -425,6 +444,7 @@ module "auto_scaling_group" {
   ec2_pool_sg_name     = var.ec2_pool_sg_name
   launch_template_name = var.launch_template_name
   asg_instance_name    = var.asg_instance_name
+  asg_name             = var.asg_name
 }
 
 # INFO: Create bastion
@@ -491,6 +511,8 @@ module "ecs_fargate" {
     module.network_stack.subnet_ecs_c_id
   ]
 
+  dashboard_iam_policy_arn = module.dashboard.dashboard_iam_policy_arn
+
   project              = var.project
   ecs_sg_name          = var.ecs_sg_name
   ecr_name             = var.ecr_name
@@ -503,4 +525,20 @@ module "ecs_fargate" {
   container_name       = var.container_name
   image_name           = var.image_name
   service_name         = var.service_name
+}
+
+module "dashboard" {
+  source = "./modules/dashboard"
+
+  dashboard_iam_policy_name = var.dashboard_iam_policy_name
+
+  region           = var.region
+  asg_name         = var.asg_name
+  service_name     = var.service_name
+  ecs_cluster_name = var.ecs_cluster_name
+  efs_id           = module.efs.efs_id
+  db_id            = module.rds_database.db_id
+
+  project           = var.project
+  cw_dashboard_name = var.cw_dashboard_name
 }

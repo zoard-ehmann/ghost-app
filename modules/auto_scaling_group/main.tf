@@ -52,9 +52,14 @@ EOF
   }
 }
 
-resource "aws_iam_role_policy_attachment" "this" {
+resource "aws_iam_role_policy_attachment" "ec2" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
+}
+
+resource "aws_iam_role_policy_attachment" "dashboard" {
+  role       = aws_iam_role.this.name
+  policy_arn = var.dashboard_iam_policy_arn
 }
 
 resource "aws_iam_instance_profile" "this" {
@@ -149,7 +154,7 @@ resource "aws_launch_template" "this" {
 }
 
 resource "aws_autoscaling_group" "this" {
-  name                = "ghost_ec2_pool"
+  name                = var.asg_name
   max_size            = 3
   min_size            = 1
   desired_capacity    = 1

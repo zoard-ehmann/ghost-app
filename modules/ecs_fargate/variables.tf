@@ -53,6 +53,11 @@ variable "ghost_version" {
   type        = string
 }
 
+variable "dashboard_iam_policy_arn" {
+  description = "ARN of the dashboard IAM policy"
+  type        = string
+}
+
 # INFO: Tags
 
 variable "project" {

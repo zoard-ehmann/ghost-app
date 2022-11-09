@@ -40,6 +40,7 @@ asg_iam_profile_name = "ghost_app_profile"
 ec2_pool_sg_name     = "ec2_pool"
 launch_template_name = "ghost"
 asg_instance_name    = "ghost-instance"
+asg_name             = "ghost_ec2_pool"
 
 # Bastion
 bastion_sg_name = "bastion"
@@ -64,3 +65,7 @@ volume_name          = "ghost_volume"
 container_name       = "ghost_container"
 image_name           = "ghost:4.12"
 service_name         = "ghost"
+
+# CloudWatch Dashboard
+dashboard_iam_policy_name = "dashboard_policy"
+cw_dashboard_name         = "ghost-dashboard"

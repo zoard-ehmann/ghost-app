@@ -78,7 +78,7 @@ resource "aws_iam_role" "this" {
 
 resource "aws_iam_policy" "this" {
   name        = var.ecs_iam_policy_name
-  description = "Allows ECR Gets, EFS DescribeFS, ClientMount and ClientWrite, Create and put logs"
+  description = "Allows ECR Gets, EFS DescribeFS, ClientMount and ClientWrite"
 
   policy = <<EOF
 {
@@ -92,10 +92,7 @@ resource "aws_iam_policy" "this" {
         "ecr:BatchGetImage",
         "elasticfilesystem:DescribeFileSystems",
         "elasticfilesystem:ClientMount",
-        "elasticfilesystem:ClientWrite",
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
+        "elasticfilesystem:ClientWrite"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -110,9 +107,14 @@ EOF
   }
 }
 
-resource "aws_iam_role_policy_attachment" "this" {
+resource "aws_iam_role_policy_attachment" "ecs" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
+}
+
+resource "aws_iam_role_policy_attachment" "dashboard" {
+  role       = aws_iam_role.this.name
+  policy_arn = var.dashboard_iam_policy_arn
 }
 
 resource "aws_iam_instance_profile" "this" {
